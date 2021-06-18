@@ -37,4 +37,5 @@ out/
 .vscode/
 
 ### Personal Files ###
+.DS_Store
 test.kts
