@@ -13,7 +13,7 @@ val Any.log get() = logger(this.javaClass)
 fun <T> logger(forClass: Class<T>) = LoggerFactory.getLogger(unwrapCompanionClass(forClass))!!
 
 fun <T> unwrapCompanionClass(ofClass: Class<T>): Class<*> = ofClass.enclosingClass?.takeIf {
-    ofClass.enclosingClass.kotlin.companionObject?.java == ofClass
+    it.kotlin.companionObject?.java == ofClass
 } ?: ofClass
 
 
@@ -23,7 +23,7 @@ suspend fun getExchange(): ServerWebExchange =
 
 suspend fun getLoginUserIdOrNull() = getExchange().request.headers[USER_ID]?.getOrNull(0)?.toLongOrNull()
 
-suspend fun getLoginUserId() = getLoginUserIdOrNull() ?: BaseCode.ASSERTION_ERROR.throws()
+suspend fun getLoginUserId() = getLoginUserIdOrNull() ?: BaseCode.UNAUTHORIZED.throws()
 
 
 // util

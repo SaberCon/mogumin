@@ -7,9 +7,6 @@ import org.springframework.data.mongodb.core.mapping.Document
 import java.time.LocalDateTime
 
 @Document
-data class IdSequence(@Id val id: String, val seq: Long)
-
-@Document
 data class User(
     val username: String,
     val password: String,

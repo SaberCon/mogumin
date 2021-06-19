@@ -14,4 +14,4 @@ suspend fun ReactiveStringRedisTemplate.set(redisKey: RedisKey, value: Any) =
         ?: opsForValue().setAndAwait(redisKey.name, toJson(value))
 
 suspend inline fun <reified T> ReactiveStringRedisTemplate.get(key: String): T? =
-    opsForValue().getAndAwait(key)?.let { parseJson<T>(it) }
+    opsForValue().getAndAwait(key)?.let { parseJson(it) }
