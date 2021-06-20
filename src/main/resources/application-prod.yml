@@ -1,0 +1,16 @@
+server:
+  port: 4396
+spring:
+  data:
+    mongodb:
+      host: www.sabercon.cn
+      port: 27017
+      database: mogumin
+      username: root
+      password: ${sabercon.default-password}
+      authentication-database: admin
+  redis:
+    host: www.sabercon.cn
+    port: 6379
+    username: root
+    password: ${sabercon.default-password}

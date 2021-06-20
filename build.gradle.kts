@@ -11,12 +11,6 @@ group = "cn.sabercon"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
-configurations {
-    compileOnly {
-        extendsFrom(configurations.annotationProcessor.get())
-    }
-}
-
 repositories {
     mavenCentral()
 }
@@ -35,13 +29,11 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
     implementation(kotlin("script-runtime"))
+    implementation("com.google.guava:guava:30.1.1-jre")
     implementation("org.springdoc:springdoc-openapi-webflux-ui:$openapiVersion")
     implementation("org.springdoc:springdoc-openapi-kotlin:$openapiVersion")
-    implementation("com.google.guava:guava:30.1.1-jre")
+    implementation("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3")
     implementation("com.auth0:java-jwt:3.16.0")
-
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
-    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
