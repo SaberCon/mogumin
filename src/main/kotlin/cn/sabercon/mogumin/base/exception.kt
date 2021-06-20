@@ -8,9 +8,11 @@ interface ErrorCode {
 
 enum class BaseCode(override val code: String, override val msg: String) : ErrorCode {
     FAILURE("10001", "failure"),
-    ASSERTION_ERROR("10002", "assertion failed"),
-    PARAM_WRONG("10003", "param is wrong"),
-    UNAUTHORIZED("10004", "unauthorized"),
+    UNAUTHORIZED("10002", "unauthorized"),
+
+    SMS_CODE_WRONG("20001", "the sms code is wrong"),
+    LOGIN_ERROR("20002", "the phone or password is wrong"),
+    PHONE_ALREADY_BOUND("20003", "the phone has been bound to other account"),
 }
 
 class ServiceException(val code: String, msg: String) : RuntimeException(msg)

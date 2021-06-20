@@ -1,5 +1,6 @@
 package cn.sabercon.mogumin.util
 
+import cn.sabercon.mogumin.base.ContextHolder
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
@@ -20,7 +21,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-lateinit var jsonMapper: ObjectMapper
+val jsonMapper: ObjectMapper by lazy { ContextHolder.getBean() }
 
 private val TIME_MODULE =
     JavaTimeModule().addSerializer(LocalDateTime::class.java, LocalDateTimeSerializer(DATETIME_FMT))!!
@@ -35,15 +36,13 @@ class JsonConfig {
 
     @Bean
     @Primary
-    fun objectMapper(builder: Jackson2ObjectMapperBuilder): ObjectMapper {
-        jsonMapper = builder.modulesToInstall(TIME_MODULE).modulesToInstall(kotlinModule())
+    fun objectMapper(builder: Jackson2ObjectMapperBuilder): ObjectMapper =
+        builder.modulesToInstall(TIME_MODULE).modulesToInstall(kotlinModule())
             .serializationInclusion(JsonInclude.Include.NON_NULL).build()
-        return jsonMapper
-    }
 }
 
 fun toJson(obj: Any) = jsonMapper.writeValueAsString(obj)!!
 
-inline fun <reified T> parseJson(str: String): T = jsonMapper.readValue(str)
+inline fun <reified T: Any> parseJson(str: String): T = jsonMapper.readValue(str)
 
-inline fun <reified T> copy(obj: Any): T = jsonMapper.convertValue(obj)
+inline fun <reified T: Any> convert(obj: Any): T = jsonMapper.convertValue(obj)
