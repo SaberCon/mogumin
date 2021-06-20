@@ -9,5 +9,5 @@ suspend fun ReactiveStringRedisTemplate.set(key: String, value: Any, timeout: Du
     timeout?.let { opsForValue().setAndAwait(key, toJson(value), it) }
         ?: opsForValue().setAndAwait(key, toJson(value))
 
-suspend inline fun <reified T: Any> ReactiveStringRedisTemplate.get(key: String): T? =
+suspend inline fun <reified T : Any> ReactiveStringRedisTemplate.get(key: String): T? =
     opsForValue().getAndAwait(key)?.let { parseJson(it) }

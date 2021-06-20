@@ -43,6 +43,6 @@ class JsonConfig {
 
 fun toJson(obj: Any) = jsonMapper.writeValueAsString(obj)!!
 
-inline fun <reified T: Any> parseJson(str: String): T = jsonMapper.readValue(str)
+inline fun <reified T : Any> parseJson(str: String): T = jsonMapper.readValue(str)
 
-inline fun <reified T: Any> convert(obj: Any): T = jsonMapper.convertValue(obj)
+inline fun <reified T : Any> convert(obj: Any): T = jsonMapper.convertValue(obj)

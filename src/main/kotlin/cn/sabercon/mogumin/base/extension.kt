@@ -17,9 +17,9 @@ import kotlin.reflect.full.companionObject
 // log
 val Any.log get() = logger(this.javaClass)
 
-fun <T: Any> logger(forClass: Class<T>) = LoggerFactory.getLogger(unwrapCompanionClass(forClass))!!
+fun <T : Any> logger(forClass: Class<T>) = LoggerFactory.getLogger(unwrapCompanionClass(forClass))!!
 
-fun <T: Any> unwrapCompanionClass(ofClass: Class<T>): Class<*> = ofClass.enclosingClass?.takeIf {
+fun <T : Any> unwrapCompanionClass(ofClass: Class<T>): Class<*> = ofClass.enclosingClass?.takeIf {
     it.kotlin.companionObject?.java == ofClass
 } ?: ofClass
 
@@ -53,9 +53,9 @@ class ContextHolder : ApplicationContextAware {
 
         fun getProperty(key: String, defaultValue: String) = getProperty(key) ?: defaultValue
 
-        inline fun <reified T: Any> getBean(name: String): T = context.getBean(name, T::class.java)
+        inline fun <reified T : Any> getBean(name: String): T = context.getBean(name, T::class.java)
 
-        inline fun <reified T: Any> getBean(): T = context.getBean()
+        inline fun <reified T : Any> getBean(): T = context.getBean()
     }
 }
 
