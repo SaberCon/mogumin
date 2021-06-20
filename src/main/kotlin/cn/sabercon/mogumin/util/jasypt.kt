@@ -17,7 +17,7 @@ fun getEncryptor(key: String) = SimpleStringPBEConfig().apply {
     keyObtentionIterations = 1000
     poolSize = 1
     providerName = "SunJCE"
+    stringOutputType = "base64"
     setSaltGeneratorClassName("org.jasypt.salt.RandomSaltGenerator")
     setIvGeneratorClassName("org.jasypt.iv.RandomIvGenerator")
-    stringOutputType = "base64"
 }.let { PooledPBEStringEncryptor().apply { setConfig(it) } }
