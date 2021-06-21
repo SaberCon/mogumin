@@ -1,6 +1,6 @@
 package cn.sabercon.mogumin.util
 
-import cn.sabercon.mogumin.base.PageModel
+import cn.sabercon.mogumin.base.Page
 import cn.sabercon.mogumin.base.getQueryParam
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.toList
@@ -38,11 +38,11 @@ suspend inline fun <reified T : Any> ReactiveMongoTemplate.findPage(
     sort: Sort = DEFAULT_DESC_SORT,
     page: Int = 0,
     size: Int = 0,
-): PageModel<T> {
+): Page<T> {
     val pn = page.takeIf { it > 0 } ?: getQueryParam("pn")?.toIntOrNull()?.takeIf { it > 0 } ?: 1
     val ps = size.takeIf { it > 0 } ?: getQueryParam("ps")?.toIntOrNull()?.takeIf { it > 0 } ?: 20
     val query = Query(Criteria().andOperator(*criteria))
-    return PageModel(
+    return Page(
         total = count<T>(query).awaitSingle(),
         list = find<T>(query.with(PageRequest.of(pn - 1, ps, sort))).asFlow().toList()
     )
