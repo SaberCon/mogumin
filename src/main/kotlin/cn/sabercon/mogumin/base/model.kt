@@ -8,8 +8,6 @@ data class Result<T : Any>(
     val data: T? = null,
 )
 
-fun <T : Any> T?.toResult(): Result<T> = Result(data = this)
-
 @Suppress("UNCHECKED_CAST")
 fun <T : Any> emptyResult(): Result<T> = EMPTY_RESULT as Result<T>
 

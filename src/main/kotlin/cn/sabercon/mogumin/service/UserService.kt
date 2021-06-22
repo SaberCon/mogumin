@@ -1,26 +1,25 @@
 package cn.sabercon.mogumin.service
 
-import cn.sabercon.mogumin.base.BaseCode
-import cn.sabercon.mogumin.base.assertTrue
-import cn.sabercon.mogumin.base.getLoginUserId
-import cn.sabercon.mogumin.base.sha256
+import cn.sabercon.mogumin.base.*
 import cn.sabercon.mogumin.model.User
 import cn.sabercon.mogumin.model.UserInfo
 import cn.sabercon.mogumin.model.UserParam
 import cn.sabercon.mogumin.util.*
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
 import kotlin.random.Random
 
-@RestController
-@RequestMapping("user")
+@WebService(["user"])
 class UserService(
     private val mongoOps: ReactiveMongoTemplate,
     private val smsService: SmsService,
 ) {
 
-    @PostMapping
-    suspend fun login(type: LoginType, phone: String, code: String): String {
+    @PostMapping(produces = ["application/json"])
+    suspend fun login(type: LoginType, phone: String, code: String): Map<String, String> {
         val user: User = when (type) {
             LoginType.PWD -> {
                 mongoOps.findOneOrNull(User::phone eq phone, User::password eq sha256(code))
@@ -31,20 +30,26 @@ class UserService(
                 mongoOps.findOneOrNull(User::phone eq phone) ?: register(phone)
             }
         }
-        return JwtUtils.createToken(user.id!!)
+        return mapOf("token" to JwtUtils.createToken(user.id!!))
     }
 
     private suspend fun register(phone: String): User {
         return mongoOps.insertAndAwait(User(phone = phone, avatar = DEFAULT_AVATAR, username = generateUsername()))
     }
 
-    private fun generateUsername() = "user${Random.nextInt(100_000_000).toString().padStart(8, '0')}"
+    private fun generateUsername(): String {
+        return "user${Random.nextInt(100_000_000).toString().padStart(8, '0')}"
+    }
 
     @GetMapping
-    suspend fun getLoginUserInfo() = convert<UserInfo>(mongoOps.find<User>(getLoginUserId()))
-        .run { copy(phone = maskPhoneNumber(phone)) }
+    suspend fun getLoginUserInfo(): UserInfo {
+        return convert<UserInfo>(mongoOps.find<User>(getLoginUserId()))
+            .run { copy(phone = maskPhoneNumber(phone)) }
+    }
 
-    private fun maskPhoneNumber(phone: String) = phone.replaceRange(3..6, "*")
+    private fun maskPhoneNumber(phone: String): String {
+        return phone.replaceRange(3..6, "*")
+    }
 
     @PutMapping("phone")
     suspend fun updatePhone(phone: String, bindCode: String, unbindCode: String) {

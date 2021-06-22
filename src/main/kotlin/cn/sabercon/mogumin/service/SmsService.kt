@@ -1,10 +1,8 @@
 package cn.sabercon.mogumin.service
 
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import cn.sabercon.mogumin.base.WebService
 
-@RestController
-@RequestMapping("sms")
+@WebService
 class SmsService {
 
     suspend fun sendCode(type: Int, phone: String): Unit = TODO()
