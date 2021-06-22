@@ -1,5 +1,5 @@
 server:
-  port: 4396
+  port: 80
 spring:
   data:
     mongodb:
@@ -12,5 +12,3 @@ spring:
   redis:
     host: www.sabercon.cn
     port: 6379
-    username: root
-    password: ${sabercon.default-password}
