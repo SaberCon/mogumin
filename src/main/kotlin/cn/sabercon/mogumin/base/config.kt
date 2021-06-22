@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.MethodParameter
 import org.springframework.core.ReactiveAdapterRegistry
 import org.springframework.core.convert.converter.Converter
 import org.springframework.format.FormatterRegistry
@@ -30,6 +31,7 @@ import reactor.core.publisher.Mono
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import kotlin.reflect.jvm.javaMethod
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
@@ -80,7 +82,6 @@ class WebConfig(private val mapper: ObjectMapper) : WebFluxConfigurer {
 }
 
 /**
- * Order should be higher than [org.springframework.web.reactive.result.method.annotation.ResponseBodyResultHandler].
  * Constructor is copied from [org.springframework.web.reactive.config.WebFluxConfigurationSupport.responseBodyResultHandler].
  */
 @Component
@@ -90,6 +91,7 @@ class WebServiceResultHandler(
     @Qualifier("webFluxContentTypeResolver") contentTypeResolver: RequestedContentTypeResolver,
 ) : AbstractMessageWriterResultHandler(serverCodecConfigurer.writers, contentTypeResolver, reactiveAdapterRegistry),
     HandlerResultHandler {
+    /** Order should be higher than [org.springframework.web.reactive.result.method.annotation.ResponseBodyResultHandler]. */
     override fun getOrder() = 99
 
     override fun supports(result: HandlerResult): Boolean {
@@ -98,12 +100,13 @@ class WebServiceResultHandler(
 
     override fun handleResult(exchange: ServerWebExchange, result: HandlerResult): Mono<Void> {
         var v = result.returnValue
+        var r = result.returnTypeSource
         if (v is Mono<*>) {
             v = v.map { if (it is Result<*>) it else Result(data = it) }.defaultIfEmpty(emptyResult())
+            r = MethodParameter(::EMPTY_RESULT.getter.javaMethod!!, -1)
         }
-        return writeBody(v, result.returnTypeSource, exchange)
+        return writeBody(v, r, exchange)
     }
-
 }
 
 @Component
