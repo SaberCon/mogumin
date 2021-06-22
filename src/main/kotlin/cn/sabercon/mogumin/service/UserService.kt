@@ -18,8 +18,8 @@ class UserService(
     private val smsService: SmsService,
 ) {
 
-    @PostMapping(produces = ["application/json"])
-    suspend fun login(type: LoginType, phone: String, code: String): Map<String, String> {
+    @PostMapping
+    suspend fun login(type: LoginType, phone: String, code: String): String {
         val user: User = when (type) {
             LoginType.PWD -> {
                 mongoOps.findOneOrNull(User::phone eq phone, User::password eq sha256(code))
@@ -30,7 +30,7 @@ class UserService(
                 mongoOps.findOneOrNull(User::phone eq phone) ?: register(phone)
             }
         }
-        return mapOf("token" to JwtUtils.createToken(user.id!!))
+        return JwtUtils.createToken(user.id!!)
     }
 
     private suspend fun register(phone: String): User {

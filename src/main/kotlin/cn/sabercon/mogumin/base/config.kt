@@ -4,13 +4,12 @@ import cn.sabercon.mogumin.util.toDate
 import cn.sabercon.mogumin.util.toDatetime
 import cn.sabercon.mogumin.util.toTime
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.ReactiveAdapterRegistry
-import org.springframework.core.annotation.Order
 import org.springframework.core.convert.converter.Converter
 import org.springframework.format.FormatterRegistry
-import org.springframework.http.codec.HttpMessageWriter
 import org.springframework.http.codec.ServerCodecConfigurer
 import org.springframework.http.codec.json.Jackson2JsonDecoder
 import org.springframework.http.codec.json.Jackson2JsonEncoder
@@ -81,26 +80,28 @@ class WebConfig(private val mapper: ObjectMapper) : WebFluxConfigurer {
 }
 
 /**
- * order should be higher than [org.springframework.web.reactive.result.method.annotation.ResponseBodyResultHandler]
+ * Order should be higher than [org.springframework.web.reactive.result.method.annotation.ResponseBodyResultHandler].
+ * Constructor is copied from [org.springframework.web.reactive.config.WebFluxConfigurationSupport.responseBodyResultHandler].
  */
-@Order(99)
 @Component
 class WebServiceResultHandler(
-    writers: List<HttpMessageWriter<*>>,
-    resolver: RequestedContentTypeResolver,
-    registry: ReactiveAdapterRegistry
-) : AbstractMessageWriterResultHandler(writers, resolver, registry), HandlerResultHandler {
+    @Qualifier("webFluxAdapterRegistry") reactiveAdapterRegistry: ReactiveAdapterRegistry,
+    serverCodecConfigurer: ServerCodecConfigurer,
+    @Qualifier("webFluxContentTypeResolver") contentTypeResolver: RequestedContentTypeResolver,
+) : AbstractMessageWriterResultHandler(serverCodecConfigurer.writers, contentTypeResolver, reactiveAdapterRegistry),
+    HandlerResultHandler {
+    override fun getOrder() = 99
+
     override fun supports(result: HandlerResult): Boolean {
         return result.returnTypeSource.containingClass.isAnnotationPresent(WebService::class.java)
     }
 
     override fun handleResult(exchange: ServerWebExchange, result: HandlerResult): Mono<Void> {
-        var returnValue = result.returnValue
-        if (returnValue is Mono<*>) {
-            returnValue =
-                returnValue.map { if (it is Result<*>) it else Result(data = it) }.defaultIfEmpty(emptyResult())
+        var v = result.returnValue
+        if (v is Mono<*>) {
+            v = v.map { if (it is Result<*>) it else Result(data = it) }.defaultIfEmpty(emptyResult())
         }
-        return writeBody(returnValue, result.returnTypeSource, exchange)
+        return writeBody(v, result.returnTypeSource, exchange)
     }
 
 }
