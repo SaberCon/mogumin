@@ -1,6 +1,16 @@
 spring:
   profiles:
     active: dev
+aliyun:
+  access-key-id: ENC(cVpjiPlykbhz6cACd8WvtmfwVeceb+cZybY0D9+h844vZpEXZeYcjeEq+EB0ySbS19bwnouGcjQQaDJPCOwU/g==)
+  access-key-secret: ENC(UrBvVAKAXSVxXDX/n4D95cRw/gIlimShnjfJRxQDkSfcUvrsxJ1rat/tA6grAu8uEhcqp08vzqRqHq97MQ5qDQ==)
+  sms:
+    sign-name: SaberCon
+    template-code: SMS_175480786
+  oss:
+    endpoint: oss-cn-shenzhen.aliyuncs.com
+    bucket: motto
+    access-domain: http://oss.sabercon.cn
 sabercon:
   default-password: ENC(dEJKRMTx4Z+iYr9fncOkqs11FpfRP57QoPPu5KJc6pyNTsVQmDTpNjtLIAoMLBGv)
   jwt-key: ENC(kp1z3QCvCnvNVjonJjW0Kr0P23XHXSEH1CuAuL8qZBSv05wehp5CMjuuo0pRBEyU)
