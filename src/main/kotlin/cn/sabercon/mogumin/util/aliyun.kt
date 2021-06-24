@@ -51,7 +51,7 @@ class AliyunHelper(private val properties: AliyunProperties) {
         return code
     }
 
-    fun specialUrlEncode(value: String) = URLEncoder.encode(value, "UTF-8")
+    fun specialUrlEncode(value: String) = URLEncoder.encode(value, Charsets.UTF_8)
         .replace("+", "%20").replace("*", "%2A").replace("%7E", "~")
 
     fun sign(input: String) = Hashing.hmacSha1("${properties.accessKeySecret}&".encodeToByteArray())
