@@ -23,6 +23,7 @@ import org.springframework.web.reactive.HandlerResultHandler
 import org.springframework.web.reactive.accept.RequestedContentTypeResolver
 import org.springframework.web.reactive.config.EnableWebFlux
 import org.springframework.web.reactive.config.WebFluxConfigurer
+import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.result.method.annotation.AbstractMessageWriterResultHandler
 import org.springframework.web.server.ServerWebExchange
 import org.springframework.web.server.WebFilter
@@ -107,6 +108,13 @@ class WebServiceResultHandler(
         }
         return writeBody(v, r, exchange)
     }
+}
+
+@Configuration
+class WebClientConfig {
+
+    @Bean
+    fun webClient(builder: WebClient.Builder) = builder.build()
 }
 
 @Component

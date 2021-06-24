@@ -10,7 +10,7 @@ aliyun:
   oss:
     endpoint: oss-cn-shenzhen.aliyuncs.com
     bucket: motto
-    access-domain: http://oss.sabercon.cn
+    host: http://oss.sabercon.cn
 sabercon:
   default-password: ENC(dEJKRMTx4Z+iYr9fncOkqs11FpfRP57QoPPu5KJc6pyNTsVQmDTpNjtLIAoMLBGv)
   jwt-key: ENC(kp1z3QCvCnvNVjonJjW0Kr0P23XHXSEH1CuAuL8qZBSv05wehp5CMjuuo0pRBEyU)
