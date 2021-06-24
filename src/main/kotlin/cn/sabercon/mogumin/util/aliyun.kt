@@ -45,9 +45,9 @@ class AliyunHelper(private val properties: AliyunProperties) {
         ).let(::TreeMap)
         val query = params.entries.joinToString("&") { "${specialUrlEncode(it.key)}=${specialUrlEncode(it.value)}" }
         val signature = specialUrlEncode(sign("GET&${specialUrlEncode("/")}&${specialUrlEncode(query)}"))
-        val result =
-            client.get().uri("https://dysmsapi.aliyuncs.com?Signature=$signature&$query").retrieve().awaitBody<String>()
-        assertTrue(result.contains(""""Code":"OK"""")) { "error when sending sms code, message: $result" }
+        val url = "https://dysmsapi.aliyuncs.com?Signature=$signature&$query"
+        client.get().uri(url).retrieve().awaitBody<String>()
+            .let { assertTrue(it.contains(""""Code":"OK"""")) { "error when sending sms code, message: $it" } }
         return code
     }
 

@@ -2,6 +2,8 @@ package cn.sabercon.mogumin.service
 
 import cn.sabercon.mogumin.base.WebService
 import cn.sabercon.mogumin.util.AliyunHelper
+import cn.sabercon.mogumin.util.get
+import cn.sabercon.mogumin.util.set
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate
 import org.springframework.web.bind.annotation.GetMapping
 
@@ -10,15 +12,15 @@ class SmsService(private val redisOps: ReactiveStringRedisTemplate, private val 
 
     @GetMapping
     suspend fun sendCode(type: Int, phone: String) {
-        aliyunHelper.sendSmsCode(phone)
+        redisOps.set("$SMS_CODE_KEY:${type}:$phone", aliyunHelper.sendSmsCode(phone), "5m")
     }
 
-    suspend fun checkCode(type: SmsType, phone: String, code: String) = true
+    suspend fun checkCode(type: SmsType, phone: String, code: String) =
+        redisOps.get<String>("$SMS_CODE_KEY:${type.ordinal}:$phone") == code
 }
 
-enum class SmsType(val code: Int) {
-    LOGIN(1),
-    UPDATE_PWD(2),
-    BIND_PHONE(3),
-    UNBIND_PHONE(4),
+enum class SmsType {
+    LOGIN, UPDATE_PWD, BIND_PHONE, UNBIND_PHONE
 }
+
+const val SMS_CODE_KEY = "sms"

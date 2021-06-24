@@ -2,7 +2,6 @@ package cn.sabercon.mogumin.util
 
 import cn.sabercon.mogumin.base.Page
 import cn.sabercon.mogumin.base.getQueryParam
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactor.awaitSingle
@@ -19,8 +18,11 @@ import kotlin.reflect.KProperty1
 
 const val ID = "id"
 
-val DEFAULT_ASC_SORT = Sort.by(ID).ascending()
-val DEFAULT_DESC_SORT = Sort.by(ID).descending()
+fun asc(vararg properties: String) = Sort.by(*properties).ascending()
+fun desc(vararg properties: String) = Sort.by(*properties).descending()
+
+val DEFAULT_ASC_SORT = asc(ID)
+val DEFAULT_DESC_SORT = desc(ID)
 
 suspend inline fun <reified T : Any> ReactiveMongoTemplate.findOneOrNull(vararg criteria: Criteria) =
     findOne<T>(Query(Criteria().andOperator(*criteria))).awaitSingleOrNull()
@@ -31,7 +33,7 @@ suspend inline fun <reified T : Any> ReactiveMongoTemplate.findOne(vararg criter
 inline fun <reified T : Any> ReactiveMongoTemplate.findFlow(
     vararg criteria: Criteria,
     sort: Sort = DEFAULT_DESC_SORT,
-): Flow<T> = find<T>(Query(Criteria().andOperator(*criteria)).with(sort)).asFlow()
+) = find<T>(Query(Criteria().andOperator(*criteria)).with(sort)).asFlow()
 
 suspend inline fun <reified T : Any> ReactiveMongoTemplate.findPage(
     vararg criteria: Criteria,
