@@ -25,7 +25,25 @@ class AliyunHelper(private val properties: AliyunProperties) {
         encodingMode = DefaultUriBuilderFactory.EncodingMode.NONE
     }).build()
 
-    private val timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")!!
+    private val timeFormatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:SSS'Z'")!!
+    private val timeFormatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")!!
+
+    suspend fun buildOssData(): OssData {
+        val now = ZonedDateTime.now(ZoneOffset.UTC)
+        val expiration = now.plusMinutes(5)
+        val dir = "mogumin/${now.year}/${now.monthValue}/${now.dayOfMonth}/"
+        val policy = """{"expiration":"${expiration.format(timeFormatter1)}.","conditions":[["content-length-range",0,536870912],["starts-with","${'$'}key","$dir"]]}"""
+            .let { Base64Utils.encodeToString(it.encodeToByteArray()) }
+        // todo: need to check if the sign is correct
+        return OssData(
+            accessId = properties.accessKeyId,
+            host = properties.oss.host,
+            dir = dir,
+            policy = policy,
+            signature = sign(policy),
+            expire = expiration.toEpochSecond(),
+            )
+    }
 
     suspend fun sendSmsCode(phone: String): String {
         val code = Random.nextInt(10000, 20000).toString().drop(1)
@@ -34,7 +52,7 @@ class AliyunHelper(private val properties: AliyunProperties) {
             "SignatureMethod" to "HMAC-SHA1",
             "SignatureNonce" to UUID.randomUUID().toString(),
             "SignatureVersion" to "1.0",
-            "Timestamp" to ZonedDateTime.now(ZoneOffset.UTC).format(timeFormatter),
+            "Timestamp" to ZonedDateTime.now(ZoneOffset.UTC).format(timeFormatter2),
             "Format" to "json",
             "Action" to "SendSms",
             "Version" to "2017-05-25",
@@ -69,3 +87,12 @@ data class AliyunProperties(
     data class SmsProperties(val signName: String, val templateCode: String)
     data class OssProperties(val endpoint: String, val bucket: String, val host: String)
 }
+
+data class OssData(
+    val accessId: String,
+    val host: String,
+    val dir: String,
+    val policy: String,
+    val signature: String,
+    val expire: Long,
+)
