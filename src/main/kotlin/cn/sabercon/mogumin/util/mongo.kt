@@ -80,9 +80,9 @@ infix fun <T> KProperty<T>.eq(value: T) = this.isEqualTo(value)
 
 
 // update
-fun update(key: KProperty<*>, value: Any?) = Update.update(asString(key), value)
+fun <T> update(key: KProperty<T>, value: T) = Update.update(asString(key), value)
 
-fun <T> Update.set(key: KProperty<*>, value: Any?) = set(asString(key), value)
+fun <T> Update.set(key: KProperty<T>, value: T) = set(asString(key), value)
 
 
 // copy from org.springframework.data.mapping

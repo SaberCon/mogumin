@@ -28,7 +28,7 @@ class AliyunHelper(private val properties: AliyunProperties) {
     private val timeFormatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:SSS'Z'")!!
     private val timeFormatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")!!
 
-    suspend fun buildOssData(): OssData {
+    fun buildOssData(): OssData {
         val now = ZonedDateTime.now(ZoneOffset.UTC)
         val expiration = now.plusMinutes(5)
         val dir = "mogumin/${now.year}/${now.monthValue}/${now.dayOfMonth}/"
@@ -69,10 +69,10 @@ class AliyunHelper(private val properties: AliyunProperties) {
         return code
     }
 
-    fun specialUrlEncode(value: String) = URLEncoder.encode(value, Charsets.UTF_8)
+    private fun specialUrlEncode(value: String) = URLEncoder.encode(value, Charsets.UTF_8)
         .replace("+", "%20").replace("*", "%2A").replace("%7E", "~")
 
-    fun sign(input: String) = Hashing.hmacSha1("${properties.accessKeySecret}&".encodeToByteArray())
+    private fun sign(input: String) = Hashing.hmacSha1("${properties.accessKeySecret}&".encodeToByteArray())
         .hashString(input, Charsets.UTF_8).asBytes().let(Base64Utils::encodeToString)
 }
 

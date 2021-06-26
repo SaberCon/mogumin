@@ -4,11 +4,11 @@ import cn.sabercon.mogumin.base.wrapExceptionToNull
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter.ofPattern
+import java.time.format.DateTimeFormatter
 
-val DATETIME_FMT = ofPattern("yyyy-MM-dd HH:mm:ss")!!
-val DATE_FMT = ofPattern("yyyy-MM-dd")!!
-val TIME_FMT = ofPattern("HH:mm:ss")!!
+val DATETIME_FMT = DateTimeFormatter.ISO_DATE_TIME!!
+val DATE_FMT = DateTimeFormatter.ISO_DATE!!
+val TIME_FMT = DateTimeFormatter.ISO_TIME!!
 
 fun String.toDatetime() = DATETIME_FMT.parse(this, LocalDateTime::from)!!
 fun String.toDate() = DATE_FMT.parse(this, LocalDate::from)!!
