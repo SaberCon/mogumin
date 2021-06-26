@@ -17,6 +17,10 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty1
 
 const val ID = "id"
+const val USER_ID = "userId"
+const val DEL = "del"
+const val CTIME = "ctime"
+const val MTIME = "mtime"
 
 fun asc(vararg properties: String) = Sort.by(*properties).ascending()
 fun desc(vararg properties: String) = Sort.by(*properties).descending()

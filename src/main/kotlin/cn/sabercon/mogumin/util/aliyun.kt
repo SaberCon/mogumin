@@ -31,7 +31,7 @@ class AliyunHelper(private val properties: AliyunProperties) {
     fun buildOssData(): OssData {
         val now = ZonedDateTime.now(ZoneOffset.UTC)
         val expiration = now.plusMinutes(5)
-        val dir = "mogumin/${now.year}/${now.monthValue}/${now.dayOfMonth}/"
+        val dir = "mogumin/${now.year}/${now.monthValue}_${now.dayOfMonth}/"
         val policy = """{"expiration":"${expiration.format(timeFormatter1)}.","conditions":[["content-length-range",0,536870912],["starts-with","${'$'}key","$dir"]]}"""
             .let { Base64Utils.encodeToString(it.encodeToByteArray()) }
         // todo: need to check if the sign is correct
