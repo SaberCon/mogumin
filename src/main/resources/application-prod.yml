@@ -12,3 +12,4 @@ spring:
   redis:
     host: www.sabercon.cn
     port: 6379
+    password: ${sabercon.default-password}
