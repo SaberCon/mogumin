@@ -1,5 +1,6 @@
-package cn.sabercon.mogumin.util
+package cn.sabercon.mogumin.extension
 
+import cn.sabercon.mogumin.util.wrapExceptionToNull
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime

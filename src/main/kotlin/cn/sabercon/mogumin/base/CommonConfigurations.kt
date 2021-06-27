@@ -1,9 +1,9 @@
 package cn.sabercon.mogumin.base
 
 import cn.sabercon.mogumin.extension.log
-import cn.sabercon.mogumin.util.toDate
-import cn.sabercon.mogumin.util.toDatetime
-import cn.sabercon.mogumin.util.toTime
+import cn.sabercon.mogumin.extension.toDate
+import cn.sabercon.mogumin.extension.toDatetime
+import cn.sabercon.mogumin.extension.toTime
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.models.media.StringSchema

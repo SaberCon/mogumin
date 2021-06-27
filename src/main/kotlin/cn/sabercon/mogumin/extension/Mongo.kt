@@ -73,9 +73,6 @@ suspend fun <T : Any> ReactiveMongoTemplate.insertAndAwait(objectToSave: T) = in
 
 suspend inline fun <reified T : Any> ReactiveMongoTemplate.find(id: String) = findById<T>(id).awaitSingle()
 
-suspend inline fun <reified T : Any> ReactiveMongoTemplate.update(id: String, update: Update) =
-    updateFirst<T>(Criteria.where(ID).isEqualTo(id), update = update)
-
 
 // query
 infix fun <T> KProperty<T>.eq(value: T) = this.isEqualTo(value)
@@ -87,7 +84,7 @@ fun <T> update(key: KProperty<T>, value: T) = Update.update(asString(key), value
 fun <T> Update.set(key: KProperty<T>, value: T) = set(asString(key), value)
 
 
-// copy from org.springframework.data.mapping
+// copy from [org.springframework.data.mapping]
 class KPropertyPath<T, U>(
     val parent: KProperty<U?>,
     val child: KProperty1<U, T>

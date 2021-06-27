@@ -1,9 +1,9 @@
 package cn.sabercon.mogumin.service
 
 import cn.sabercon.mogumin.base.WebService
+import cn.sabercon.mogumin.extension.get
+import cn.sabercon.mogumin.extension.set
 import cn.sabercon.mogumin.util.AliyunHelper
-import cn.sabercon.mogumin.util.get
-import cn.sabercon.mogumin.util.set
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate
 import org.springframework.web.bind.annotation.GetMapping
 
