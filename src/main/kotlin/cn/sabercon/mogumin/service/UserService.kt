@@ -43,7 +43,7 @@ class UserService(
 
     @GetMapping
     suspend fun getLoginUserInfo(): UserInfo {
-        return convert<UserInfo>(mongoOps.find<User>(getLoginUserId()))
+        return convertFrom<UserInfo>(mongoOps.find<User>(getLoginUserId()))
             .run { copy(phone = maskPhoneNumber(phone)) }
     }
 

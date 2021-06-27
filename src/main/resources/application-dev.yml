@@ -20,4 +20,5 @@ management:
 logging:
   level:
     web: debug
+    sql: debug
     cn.sabercon: debug

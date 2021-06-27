@@ -10,7 +10,6 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer
-import com.fasterxml.jackson.module.kotlin.convertValue
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.springframework.context.annotation.Bean
@@ -44,5 +43,3 @@ class JsonConfig {
 fun toJson(obj: Any) = jsonMapper.writeValueAsString(obj)!!
 
 inline fun <reified T : Any> parseJson(str: String): T = jsonMapper.readValue(str)
-
-inline fun <reified T : Any> convert(obj: Any): T = jsonMapper.convertValue(obj)

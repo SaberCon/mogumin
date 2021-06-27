@@ -32,7 +32,10 @@ suspend fun getHeader(name: String) = getExchange().request.headers[name]?.getOr
 
 suspend fun getQueryParam(name: String) = getExchange().request.queryParams[name]?.getOrNull(0)
 
-suspend fun getLoginUserIdOrNull() = getHeader("token")?.let { JwtUtils.decodeToken(it) }?.subject
+suspend fun getLoginUserIdOrNull(): String? {
+    return getHeader("token")?.let { JwtUtils.decodeToken(it) }?.subject
+        ?: if (!ContextHolder.isProd()) getHeader("token") else null
+}
 
 suspend fun getLoginUserId() = getLoginUserIdOrNull() ?: BaseCode.UNAUTHORIZED.throws()
 
@@ -56,6 +59,8 @@ class ContextHolder : ApplicationContextAware {
         inline fun <reified T : Any> getBean(name: String): T = context.getBean(name, T::class.java)
 
         inline fun <reified T : Any> getBean(): T = context.getBean()
+
+        fun isProd() = context.environment.activeProfiles.contains("prod")
     }
 }
 
