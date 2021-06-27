@@ -50,3 +50,7 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+springBoot {
+    mainClass.set("cn.sabercon.mogumin.MoguminApplicationKt")
+}
