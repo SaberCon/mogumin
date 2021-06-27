@@ -1,6 +1,8 @@
 package cn.sabercon.mogumin.service
 
-import cn.sabercon.mogumin.base.*
+import cn.sabercon.mogumin.base.BaseCode
+import cn.sabercon.mogumin.base.WebService
+import cn.sabercon.mogumin.extension.*
 import cn.sabercon.mogumin.model.User
 import cn.sabercon.mogumin.model.UserInfo
 import cn.sabercon.mogumin.model.UserParam

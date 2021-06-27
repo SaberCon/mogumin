@@ -1,6 +1,5 @@
 package cn.sabercon.mogumin.util
 
-import cn.sabercon.mogumin.base.assertTrue
 import com.google.common.hash.Hashing
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding

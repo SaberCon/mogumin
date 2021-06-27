@@ -1,9 +1,7 @@
-package cn.sabercon.mogumin.base
+package cn.sabercon.mogumin.util
 
-import cn.sabercon.mogumin.util.JwtUtils
-import com.google.common.hash.Hashing
+import cn.sabercon.mogumin.base.BaseCode
 import kotlinx.coroutines.reactor.awaitSingle
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.getBean
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
@@ -11,20 +9,8 @@ import org.springframework.stereotype.Component
 import org.springframework.web.filter.reactive.ServerWebExchangeContextFilter
 import org.springframework.web.server.ServerWebExchange
 import reactor.core.publisher.Mono
-import java.nio.charset.StandardCharsets
-import kotlin.reflect.full.companionObject
 
-// log
-val Any.log get() = logger(this.javaClass)
-
-fun <T : Any> logger(forClass: Class<T>) = LoggerFactory.getLogger(unwrapCompanionClass(forClass))!!
-
-fun <T : Any> unwrapCompanionClass(ofClass: Class<T>): Class<*> = ofClass.enclosingClass?.takeIf {
-    it.kotlin.companionObject?.java == ofClass
-} ?: ofClass
-
-
-// http
+// request
 suspend fun getExchange(): ServerWebExchange =
     Mono.deferContextual { Mono.just(it) }.awaitSingle()[ServerWebExchangeContextFilter.EXCHANGE_CONTEXT_ATTRIBUTE]
 
@@ -63,19 +49,3 @@ class ContextHolder : ApplicationContextAware {
         fun isProd() = context.environment.activeProfiles.contains("prod")
     }
 }
-
-
-// util
-fun <T> wrapExceptionToNull(supplier: () -> T) = try {
-    supplier()
-} catch (e: Exception) {
-    null
-}
-
-fun assertTrue(value: Boolean, errorCode: ErrorCode = BaseCode.FAILURE, lazyMessage: () -> String = { errorCode.msg }) {
-    if (!value) {
-        errorCode.throws(lazyMessage())
-    }
-}
-
-fun sha256(input: String) = Hashing.sha256().hashString(input, StandardCharsets.UTF_8).toString()

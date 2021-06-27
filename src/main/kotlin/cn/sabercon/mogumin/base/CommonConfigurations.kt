@@ -1,9 +1,14 @@
 package cn.sabercon.mogumin.base
 
+import cn.sabercon.mogumin.extension.log
 import cn.sabercon.mogumin.util.toDate
 import cn.sabercon.mogumin.util.toDatetime
 import cn.sabercon.mogumin.util.toTime
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.swagger.v3.oas.annotations.enums.ParameterIn
+import io.swagger.v3.oas.models.media.StringSchema
+import io.swagger.v3.oas.models.parameters.Parameter
+import org.springdoc.core.customizers.OperationCustomizer
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -115,6 +120,17 @@ class WebClientConfig {
 
     @Bean
     fun webClient(builder: WebClient.Builder) = builder.build()
+}
+
+@Configuration
+class SwaggerConfig {
+
+    @Bean
+    fun operationCustomizer(builder: WebClient.Builder) = OperationCustomizer { operation, handlerMethod ->
+        operation.addParametersItem(Parameter().`in`(ParameterIn.HEADER.toString())
+            .schema(StringSchema()).name("token"))
+        operation
+    }
 }
 
 @Component

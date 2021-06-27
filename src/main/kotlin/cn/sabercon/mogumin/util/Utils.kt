@@ -1,9 +1,29 @@
 package cn.sabercon.mogumin.util
 
+import cn.sabercon.mogumin.base.BaseCode
+import cn.sabercon.mogumin.base.ErrorCode
+import com.google.common.hash.Hashing
+import java.nio.charset.StandardCharsets
 import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.*
 
+fun <T> wrapExceptionToNull(supplier: () -> T) = try {
+    supplier()
+} catch (e: Exception) {
+    null
+}
+
+fun assertTrue(value: Boolean, errorCode: ErrorCode = BaseCode.FAILURE, lazyMessage: () -> String = { errorCode.msg }) {
+    if (!value) {
+        errorCode.throws(lazyMessage())
+    }
+}
+
+fun sha256(input: String) = Hashing.sha256().hashString(input, StandardCharsets.UTF_8).toString()
+
+
+// copy
 inline fun <reified T : Any> convertFrom(source: Any, vararg otherProperties: Pair<KProperty1<T, *>, Any?>): T {
     val sourceProperties = source::class.memberProperties.map { it.name to it.getter.call(source) }
     val totalProperties = sourceProperties + otherProperties.map { it.first.name to it.second }

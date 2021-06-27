@@ -1,7 +1,7 @@
-package cn.sabercon.mogumin.util
+package cn.sabercon.mogumin.extension
 
 import cn.sabercon.mogumin.base.Page
-import cn.sabercon.mogumin.base.getQueryParam
+import cn.sabercon.mogumin.util.getQueryParam
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactor.awaitSingle
