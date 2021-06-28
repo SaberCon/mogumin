@@ -58,3 +58,7 @@ jib {
         mainClass = "cn.sabercon.mogumin.MoguminApplicationKt"
     }
 }
+
+springBoot {
+    mainClass.set("cn.sabercon.mogumin.MoguminApplicationKt")
+}
