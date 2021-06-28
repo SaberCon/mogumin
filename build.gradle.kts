@@ -5,6 +5,8 @@ plugins {
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.5.10"
     kotlin("plugin.spring") version "1.5.10"
+
+    id("com.google.cloud.tools.jib") version "3.1.1"
 }
 
 group = "cn.sabercon"
@@ -51,6 +53,8 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-springBoot {
-    mainClass.set("cn.sabercon.mogumin.MoguminApplicationKt")
+jib {
+    container {
+        mainClass = "cn.sabercon.mogumin.MoguminApplicationKt"
+    }
 }
