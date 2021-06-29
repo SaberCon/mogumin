@@ -53,12 +53,14 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+val mainClassKt = "cn.sabercon.mogumin.MoguminApplicationKt"
+
 jib {
     container {
-        mainClass = "cn.sabercon.mogumin.MoguminApplicationKt"
+        mainClass = mainClassKt
     }
 }
 
 springBoot {
-    mainClass.set("cn.sabercon.mogumin.MoguminApplicationKt")
+    mainClass.set(mainClassKt)
 }
