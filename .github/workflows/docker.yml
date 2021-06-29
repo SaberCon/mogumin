@@ -36,4 +36,4 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
       - name: Publish Docker image with Jib
-        run: ./gradlew jib -Djib.to.image=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest -Djib.to.auth.username=${{ github.actor }} -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }}
+        run: ./gradlew jib -Djib.to.image=${{ env.REGISTRY }}/sabercon/mogumin:0.0.1-SNAPSHOT -Djib.to.auth.username=${{ github.actor }} -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }}
