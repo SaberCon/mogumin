@@ -38,3 +38,4 @@ out/
 ### Personal Files ###
 .DS_Store
 test.kts
+application-local.yml
