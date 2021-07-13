@@ -8,12 +8,6 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.*
 
-fun <T> wrapExceptionToNull(supplier: () -> T) = try {
-    supplier()
-} catch (e: Exception) {
-    null
-}
-
 fun assertTrue(value: Boolean, errorCode: ErrorCode = BaseCode.FAILURE, lazyMessage: () -> String = { errorCode.msg }) {
     if (!value) {
         errorCode.throws(lazyMessage())

@@ -31,8 +31,9 @@ class AliyunHelper(private val properties: AliyunProperties) {
         val now = ZonedDateTime.now(ZoneOffset.UTC)
         val expiration = now.plusMinutes(5)
         val dir = "mogumin/${now.year}/${now.monthValue}_${now.dayOfMonth}/"
-        val policy = """{"expiration":"${expiration.format(timeFormatter1)}.","conditions":[["content-length-range",0,536870912],["starts-with","${'$'}key","$dir"]]}"""
-            .let { Base64Utils.encodeToString(it.encodeToByteArray()) }
+        val policy =
+            """{"expiration":"${expiration.format(timeFormatter1)}.","conditions":[["content-length-range",0,536870912],["starts-with","${'$'}key","$dir"]]}"""
+                .let { Base64Utils.encodeToString(it.encodeToByteArray()) }
         // todo: need to check if the sign is correct
         return OssData(
             accessId = properties.accessKeyId,
@@ -41,7 +42,7 @@ class AliyunHelper(private val properties: AliyunProperties) {
             policy = policy,
             signature = sign(policy),
             expire = expiration.toEpochSecond(),
-            )
+        )
     }
 
     suspend fun sendSmsCode(phone: String): String {

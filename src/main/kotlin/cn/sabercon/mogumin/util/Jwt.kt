@@ -19,5 +19,5 @@ object JwtUtils {
         .withExpiresAt(ZonedDateTime.now().plus(EXPIRATION).toInstant().let { Date.from(it) })
         .sign(algorithm)!!
 
-    fun decodeToken(token: String) = wrapExceptionToNull { verifier.verify(token) }
+    fun decodeToken(token: String) = runCatching { verifier.verify(token) }.getOrNull()
 }
