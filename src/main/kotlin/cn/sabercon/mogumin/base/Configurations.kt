@@ -129,7 +129,6 @@ class SwaggerConfig {
     fun operationCustomizer(builder: WebClient.Builder) = OperationCustomizer { operation, handlerMethod ->
         operation.addParametersItem(Parameter().`in`(ParameterIn.HEADER.toString())
             .schema(StringSchema()).name("token"))
-        operation
     }
 }
 

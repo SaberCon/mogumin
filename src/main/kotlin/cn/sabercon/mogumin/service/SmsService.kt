@@ -12,7 +12,7 @@ class SmsService(private val redisOps: ReactiveStringRedisTemplate, private val 
 
     @GetMapping
     suspend fun sendCode(type: Int, phone: String) {
-        redisOps.set("$SMS_CODE_KEY:${type}:$phone", aliyunHelper.sendSmsCode(phone), "5m")
+        redisOps.set("$SMS_CODE_KEY:$type:$phone", aliyunHelper.sendSmsCode(phone), "5m")
     }
 
     suspend fun checkCode(type: SmsType, phone: String, code: String) =

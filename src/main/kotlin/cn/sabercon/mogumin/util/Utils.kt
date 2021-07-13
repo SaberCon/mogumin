@@ -31,7 +31,7 @@ inline fun <reified T : Any> convertFrom(source: Any, vararg otherProperties: Pa
     val constructor = T::class.primaryConstructor!!
     return totalProperties.toMap().filterKeys { constructor.valueParameters.any { p -> p.name!! == it } }
         .mapKeys { constructor.valueParameters.first { p -> p.name!! == it.key } }
-        .let { constructor.callBy(it) }
+        .let(constructor::callBy)
 }
 
 inline fun <reified T : Any> copyFrom(target: T, source: Any, vararg otherProperties: Pair<KProperty1<T, *>, Any?>): T {
