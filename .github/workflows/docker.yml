@@ -17,8 +17,6 @@ env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
-  # Jib cannot handle the image name correctly because my account contains uppercase letters
-  # So I write the image name hard coded
   IMAGE_NAME: ${{ github.repository }}
 
 
@@ -38,4 +36,6 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
       - name: Publish with Jib
+        # Jib cannot handle the image name correctly because my account contains uppercase letters
+        # So I write the image name hard coded
         run: ./gradlew jib -Djib.to.image=${{ env.REGISTRY }}/sabercon/mogumin:latest -Djib.to.auth.username=${{ github.actor }} -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }}
