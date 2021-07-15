@@ -4,7 +4,7 @@ import cn.sabercon.mogumin.base.BaseCode
 import cn.sabercon.mogumin.base.WebService
 import cn.sabercon.mogumin.extension.*
 import cn.sabercon.mogumin.model.User
-import cn.sabercon.mogumin.model.UserInfo
+import cn.sabercon.mogumin.model.CurrentUser
 import cn.sabercon.mogumin.model.UserParam
 import cn.sabercon.mogumin.util.*
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
@@ -20,7 +20,7 @@ class UserService(
     private val smsService: SmsService,
 ) {
 
-    @PostMapping
+    @PostMapping("login")
     suspend fun login(type: LoginType, phone: String, code: String): String {
         val user: User = when (type) {
             LoginType.PWD -> {
@@ -28,7 +28,7 @@ class UserService(
                     ?: BaseCode.LOGIN_ERROR.throws()
             }
             LoginType.SMS -> {
-                assertTrue(smsService.checkCode(SmsType.LOGIN, phone, code), BaseCode.SMS_CODE_WRONG)
+                assertTrue(smsService.checkCode(SmsType.LOGIN.code, phone, code), BaseCode.SMS_CODE_WRONG)
                 mongoOps.findOneOrNull(User::phone eq phone) ?: register(phone)
             }
         }
@@ -43,37 +43,38 @@ class UserService(
         return "user${Random.nextInt(100_000_000).toString().padStart(8, '0')}"
     }
 
-    @GetMapping
-    suspend fun getLoginUserInfo(): UserInfo {
-        val user = mongoOps.find<User>(getLoginUserId())
-        return convertFrom(user, UserInfo::phone to maskPhoneNumber(user.phone))
+    @GetMapping("current")
+    suspend fun getCurrentUser(): CurrentUser {
+        val user = findCurrentUser()
+        return convertFrom(findCurrentUser(), CurrentUser::phone to maskPhoneNumber(user.phone))
     }
 
     private fun maskPhoneNumber(phone: String): String {
-        return phone.replaceRange(3..6, "*")
+        return phone.replaceRange(3..6, "****")
     }
 
     @PutMapping("phone")
-    suspend fun updatePhone(phone: String, bindCode: String, unbindCode: String) {
-        val user = mongoOps.find<User>(getLoginUserId())
-        assertTrue(smsService.checkCode(SmsType.BIND_PHONE, phone, bindCode), BaseCode.SMS_CODE_WRONG)
-        assertTrue(smsService.checkCode(SmsType.UNBIND_PHONE, user.phone, unbindCode), BaseCode.SMS_CODE_WRONG)
+    suspend fun updatePhone(phone: String, unbindCode: String, bindCode: String) {
+        val user = findCurrentUser()
+        assertTrue(smsService.checkCode(SmsType.BIND_PHONE.code, phone, bindCode), BaseCode.SMS_CODE_WRONG)
+        assertTrue(smsService.checkCode(SmsType.UNBIND_PHONE.code, user.phone, unbindCode), BaseCode.SMS_CODE_WRONG)
         assertTrue(!mongoOps.exists<User>(User::phone eq phone), BaseCode.PHONE_ALREADY_BOUND)
         mongoOps.saveAndAwait(user.copy(phone = phone))
     }
 
     @PutMapping("pwd")
     suspend fun updatePwd(password: String, code: String) {
-        val user = mongoOps.find<User>(getLoginUserId())
-        assertTrue(smsService.checkCode(SmsType.UPDATE_PWD, user.phone, code), BaseCode.SMS_CODE_WRONG)
+        val user = findCurrentUser()
+        assertTrue(smsService.checkCode(SmsType.UPDATE_PWD.code, user.phone, code), BaseCode.SMS_CODE_WRONG)
         mongoOps.saveAndAwait(user.copy(password = sha256(password)))
     }
 
     @PutMapping
     suspend fun update(@RequestBody param: UserParam) {
-        val user = mongoOps.find<User>(getLoginUserId())
-        mongoOps.saveAndAwait(user.copy(username = param.username, avatar = param.avatar))
+        mongoOps.saveAndAwait(findCurrentUser().copy(username = param.username, avatar = param.avatar))
     }
+
+    suspend fun findCurrentUser() = mongoOps.find<User>(getCurrentUserId())
 }
 
 enum class LoginType { PWD, SMS }

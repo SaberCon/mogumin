@@ -7,7 +7,7 @@ import cn.sabercon.mogumin.model.Reminder
 import cn.sabercon.mogumin.model.ReminderParam
 import cn.sabercon.mogumin.util.convertFrom
 import cn.sabercon.mogumin.util.copyFrom
-import cn.sabercon.mogumin.util.getLoginUserId
+import cn.sabercon.mogumin.util.getCurrentUserId
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.query.inValues
 import org.springframework.web.bind.annotation.*
@@ -17,18 +17,18 @@ class ReminderService(private val mongoOps: ReactiveMongoTemplate) {
 
     @GetMapping("{id}")
     suspend fun get(@PathVariable id: String): Reminder {
-        return mongoOps.findOne(Reminder::id eq id, Reminder::userId eq getLoginUserId())
+        return mongoOps.findOne(Reminder::id eq id, Reminder::userId eq getCurrentUserId())
     }
 
     @GetMapping
     suspend fun getPage(): Page<Reminder> {
-        return mongoOps.findPage(Reminder::userId eq getLoginUserId())
+        return mongoOps.findPage(Reminder::userId eq getCurrentUserId())
     }
 
     @PostMapping
     suspend fun save(@RequestBody param: ReminderParam) {
         if (param.id == null) {
-            mongoOps.insertAndAwait(convertFrom(param, Reminder::userId to getLoginUserId()))
+            mongoOps.insertAndAwait(convertFrom(param, Reminder::userId to getCurrentUserId()))
         } else {
             mongoOps.saveAndAwait(copyFrom(get(param.id), param))
         }

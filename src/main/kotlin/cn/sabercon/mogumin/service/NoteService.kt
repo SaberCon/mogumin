@@ -7,7 +7,7 @@ import cn.sabercon.mogumin.model.Note
 import cn.sabercon.mogumin.model.NoteParam
 import cn.sabercon.mogumin.util.convertFrom
 import cn.sabercon.mogumin.util.copyFrom
-import cn.sabercon.mogumin.util.getLoginUserId
+import cn.sabercon.mogumin.util.getCurrentUserId
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.query.inValues
 import org.springframework.web.bind.annotation.*
@@ -17,18 +17,18 @@ class NoteService(private val mongoOps: ReactiveMongoTemplate) {
 
     @GetMapping("{id}")
     suspend fun get(@PathVariable id: String): Note {
-        return mongoOps.findOne(Note::id eq id, Note::userId eq getLoginUserId())
+        return mongoOps.findOne(Note::id eq id, Note::userId eq getCurrentUserId())
     }
 
     @GetMapping
     suspend fun getPage(): Page<Note> {
-        return mongoOps.findPage(Note::userId eq getLoginUserId())
+        return mongoOps.findPage(Note::userId eq getCurrentUserId())
     }
 
     @PostMapping
     suspend fun save(@RequestBody param: NoteParam) {
         if (param.id == null) {
-            mongoOps.insertAndAwait(convertFrom(param, Note::userId to getLoginUserId()))
+            mongoOps.insertAndAwait(convertFrom(param, Note::userId to getCurrentUserId()))
         } else {
             mongoOps.saveAndAwait(copyFrom(get(param.id), param))
         }

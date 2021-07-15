@@ -1,6 +1,6 @@
 package cn.sabercon.mogumin.model
 
-data class UserInfo(
+data class CurrentUser(
     val username: String,
     val phone: String,
     val avatar: String,

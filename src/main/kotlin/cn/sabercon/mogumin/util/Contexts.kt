@@ -18,12 +18,12 @@ suspend fun getHeader(name: String) = getExchange().request.headers[name]?.getOr
 
 suspend fun getQueryParam(name: String) = getExchange().request.queryParams[name]?.getOrNull(0)
 
-suspend fun getLoginUserIdOrNull(): String? {
+suspend fun getCurrentUserIdOrNull(): String? {
     return getHeader("token")?.let { JwtUtils.decodeToken(it) }?.subject
         ?: if (!ContextHolder.isProd()) getHeader("token") else null
 }
 
-suspend fun getLoginUserId() = getLoginUserIdOrNull() ?: BaseCode.UNAUTHORIZED.throws()
+suspend fun getCurrentUserId() = getCurrentUserIdOrNull() ?: BaseCode.UNAUTHORIZED.throws()
 
 
 // spring
