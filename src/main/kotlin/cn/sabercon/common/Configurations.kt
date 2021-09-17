@@ -71,6 +71,7 @@ class FilterConfig {
     @Bean
     @Order(1)
     fun loginFilter() = WebFilter { exchange, chain ->
+        // TODO add auth
         chain.filter(exchange)
     }
 
