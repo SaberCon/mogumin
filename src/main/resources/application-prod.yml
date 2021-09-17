@@ -1,15 +1,10 @@
 server:
   port: 8080
 spring:
+  r2dbc:
+    url: r2dbc:postgresql://root:${sabercon.default-password}@www.sabercon.cn:5432/megumin
+  redis:
+    url: redis://${sabercon.default-password}@www.sabercon.cn:6379
   data:
     mongodb:
-      host: www.sabercon.cn
-      port: 27017
-      database: mogumin
-      username: root
-      password: ${sabercon.default-password}
-      authentication-database: admin
-  redis:
-    host: www.sabercon.cn
-    port: 6379
-    password: ${sabercon.default-password}
+      uri: mongodb://root:${sabercon.default-password}@www.sabercon.cn:27017/megumin

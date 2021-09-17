@@ -1,9 +1,11 @@
 server:
   port: 8080
 spring:
+  r2dbc:
+    url: r2dbc:postgresql://root:root@localhost:5432/megumin
   data:
     mongodb:
-      database: mogumin
+      database: megumin
 management:
   endpoints:
     web:
@@ -15,5 +17,7 @@ management:
 logging:
   level:
     web: debug
-    sql: debug
+    org.springframework.r2dbc: debug
+    org.springframework.data.mongodb: debug
     cn.sabercon: debug
+debug: true

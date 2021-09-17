@@ -1,12 +1,24 @@
 version: '3'
+
 services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    volumes:
+      - /root/docker/postgres/data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=${DEFAULT_PASSWORD}
+      - POSTGRES_DB=megumin
   mongo:
     image: mongo
     container_name: mongo
     volumes:
-      - /root/docker/mongo/db:/data/db
+      - /root/docker/mongo/data:/data/db
     ports:
-      - 27017:27017
+      - '27017:27017'
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: ${DEFAULT_PASSWORD}
@@ -15,7 +27,7 @@ services:
     container_name: redis
     command: redis-server --requirepass ${DEFAULT_PASSWORD}
     ports:
-      - 6379:6379
+      - '6379:6379'
   nginx:
     image: nginx
     container_name: nginx
@@ -24,15 +36,16 @@ services:
       - /root/docker/nginx/html:/usr/share/nginx/html
       - /root/docker/nginx/log:/var/log/nginx
     ports:
-      - 80:80
-  mogumin:
-    image: ghcr.io/sabercon/mogumin
-    container_name: mogumin
+      - '80:80'
+  megumin:
+    image: ghcr.io/sabercon/megumin
+    container_name: megumin
     ports:
-      - 8080:8080
+      - '8080:8080'
     environment:
       SPRING_PROFILES_ACTIVE: prod
       JASYPT_ENCRYPTOR_PASSWORD: ${KEY}
     depends_on:
       - mongo
       - redis
+      - postgres
