@@ -1,5 +1,4 @@
-create table if not exists t_user
-(
+create table if not exists t_user(
     f_id bigint generated always as identity primary key,
     f_username varchar not null,
     f_password varchar,

@@ -24,7 +24,7 @@ class R2dbcConfig {
     @Bean
     fun initializer(connectionFactory: ConnectionFactory) = ConnectionFactoryInitializer().apply {
         setConnectionFactory(connectionFactory)
-        val resource = ResourceDatabasePopulator(ClassPathResource("schema.sql"), ClassPathResource("update.sql"))
+        val resource = ResourceDatabasePopulator(ClassPathResource("schema.sql"))
         setDatabasePopulator(resource)
     }
 
