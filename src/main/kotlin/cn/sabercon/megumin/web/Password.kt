@@ -1,4 +1,4 @@
-package cn.sabercon.megumin.ctrl
+package cn.sabercon.megumin.web
 
 import cn.sabercon.common.WebController
 import cn.sabercon.megumin.model.PasswordParam

@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional
 class FileService(private val repo: FileRepo) {
 
     suspend fun get(id: String): File? {
-        return repo.findByIdAndUserId(id, getCurrentUserId())
+        return repo.findByUserIdAndId(getCurrentUserId(), id)
     }
 
     suspend fun list(): Flow<File> {
@@ -34,6 +34,6 @@ class FileService(private val repo: FileRepo) {
 
     @Transactional
     suspend fun delete(ids: List<String>) {
-        repo.deleteByIdInAndUserId(ids, getCurrentUserId())
+        repo.deleteByUserIdAndIdIn(getCurrentUserId(), ids)
     }
 }

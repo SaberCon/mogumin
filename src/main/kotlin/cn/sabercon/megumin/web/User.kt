@@ -1,4 +1,4 @@
-package cn.sabercon.megumin.ctrl
+package cn.sabercon.megumin.web
 
 import cn.sabercon.common.WebController
 import cn.sabercon.common.util.copyToModel
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody
 class UserController(private val service: UserService) {
 
     @PostMapping("login")
-    suspend fun login(type: LoginType, phone: String, code: String) = service.login(type, phone, code)
+    suspend fun login(param: LoginParam) = service.login(param.type, param.phone, param.code)
 
     @GetMapping("current")
     suspend fun getCurrentUser() = service.getCurrentUser().let {
@@ -23,14 +23,31 @@ class UserController(private val service: UserService) {
     }
 
     @PutMapping("phone")
-    suspend fun updatePhone(phone: String, unbindCode: String, bindCode: String) =
-        service.updatePhone(phone, unbindCode, bindCode)
+    suspend fun updatePhone(param: UpdatePhoneParam) =
+        service.updatePhone(param.phone, param.unbindCode, param.bindCode)
 
     @PutMapping("pwd")
-    suspend fun updatePwd(password: String, code: String) = service.updatePwd(password, code)
+    suspend fun updatePwd(param: UpdatePwdParam) = service.updatePwd(param.password, param.code)
 
     @PutMapping
     suspend fun update(@RequestBody param: UserParam) = service.update(param)
 
     private fun maskPhoneNumber(phone: String) = phone.replaceRange(3..6, "****")
 }
+
+data class LoginParam(
+    val type: LoginType,
+    val phone: String,
+    val code: String,
+)
+
+data class UpdatePhoneParam(
+    val phone: String,
+    val unbindCode: String,
+    val bindCode: String,
+)
+
+data class UpdatePwdParam(
+    val password: String,
+    val code: String,
+)

@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional
 class ImageService(private val repo: ImageRepo) {
 
     suspend fun get(id: String): Image? {
-        return repo.findByIdAndUserId(id, getCurrentUserId())
+        return repo.findByUserIdAndId(getCurrentUserId(), id)
     }
 
     suspend fun list(): Flow<Image> {
@@ -34,6 +34,6 @@ class ImageService(private val repo: ImageRepo) {
 
     @Transactional
     suspend fun delete(ids: List<String>) {
-        repo.deleteByIdInAndUserId(ids, getCurrentUserId())
+        repo.deleteByUserIdAndIdIn(getCurrentUserId(), ids)
     }
 }

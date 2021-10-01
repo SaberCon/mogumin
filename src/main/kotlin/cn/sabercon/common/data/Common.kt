@@ -27,11 +27,11 @@ suspend fun pageable(sort: Sort = DEFAULT_SORT) = PageRequest.of(
 
 interface AssetRepository<T> : CoroutineCrudRepository<T, String> {
 
-    suspend fun findByIdAndUserId(id: String, userId: Long): T?
+    suspend fun findByUserIdAndId(userId: Long, id: String): T?
 
     fun findByUserId(userId: Long, pageable: Pageable): Flow<T>
 
-    suspend fun deleteByIdInAndUserId(ids: List<String>, userId: Long)
+    suspend fun deleteByUserIdAndIdIn(userId: Long, ids: List<String>)
 }
 
 

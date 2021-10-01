@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional
 class PasswordService(private val repo: PasswordRepo) {
 
     suspend fun get(id: String): Password? {
-        return repo.findByIdAndUserId(id, getCurrentUserId())
+        return repo.findByUserIdAndId(getCurrentUserId(), id)
     }
 
     suspend fun list(): Flow<Password> {
@@ -34,6 +34,6 @@ class PasswordService(private val repo: PasswordRepo) {
 
     @Transactional
     suspend fun delete(ids: List<String>) {
-        repo.deleteByIdInAndUserId(ids, getCurrentUserId())
+        repo.deleteByUserIdAndIdIn(getCurrentUserId(), ids)
     }
 }

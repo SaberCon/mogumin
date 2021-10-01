@@ -1,4 +1,4 @@
-package cn.sabercon.megumin.ctrl
+package cn.sabercon.megumin.web
 
 import cn.sabercon.common.BaseCode
 import cn.sabercon.common.WebController
@@ -19,7 +19,7 @@ class SmsController(
     suspend fun checkCode(type: Int, phone: String?, code: String) =
         service.checkCode(type, getPhone(type, phone), code)
 
-    suspend fun getPhone(type: Int, phone: String?): String {
+    private suspend fun getPhone(type: Int, phone: String?): String {
         return SmsType.values().firstOrNull { it.code == type }?.let {
             if (it.authRequired) userService.getCurrentUser().phone else phone
         } ?: BaseCode.BAD_REQUEST.throws()

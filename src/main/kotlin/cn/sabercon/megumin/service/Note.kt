@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional
 class NoteService(private val repo: NoteRepo) {
 
     suspend fun get(id: String): Note? {
-        return repo.findByIdAndUserId(id, getCurrentUserId())
+        return repo.findByUserIdAndId(getCurrentUserId(), id)
     }
 
     suspend fun list(): Flow<Note> {
@@ -34,6 +34,6 @@ class NoteService(private val repo: NoteRepo) {
 
     @Transactional
     suspend fun delete(ids: List<String>) {
-        repo.deleteByIdInAndUserId(ids, getCurrentUserId())
+        repo.deleteByUserIdAndIdIn(getCurrentUserId(), ids)
     }
 }

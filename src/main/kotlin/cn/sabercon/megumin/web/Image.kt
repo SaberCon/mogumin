@@ -1,12 +1,12 @@
-package cn.sabercon.megumin.ctrl
+package cn.sabercon.megumin.web
 
 import cn.sabercon.common.WebController
-import cn.sabercon.megumin.model.NoteParam
-import cn.sabercon.megumin.service.NoteService
+import cn.sabercon.megumin.model.ImageParam
+import cn.sabercon.megumin.service.ImageService
 import org.springframework.web.bind.annotation.*
 
-@WebController(["note"])
-class NoteController(private val service: NoteService) {
+@WebController(["img"])
+class ImageController(private val service: ImageService) {
 
     @GetMapping("{id}")
     suspend fun get(@PathVariable id: String) = service.get(id)
@@ -15,7 +15,7 @@ class NoteController(private val service: NoteService) {
     suspend fun list() = service.list()
 
     @PostMapping
-    suspend fun save(@RequestBody param: NoteParam) = service.save(param)
+    suspend fun save(@RequestBody param: ImageParam) = service.save(param)
 
     @DeleteMapping
     suspend fun delete(@RequestBody ids: List<String>) = service.delete(ids)

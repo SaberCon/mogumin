@@ -1,18 +1,18 @@
 package cn.sabercon.megumin.service
 
 import cn.sabercon.common.BaseCode
-import cn.sabercon.common.WebController
 import cn.sabercon.common.util.JwtUtils
 import cn.sabercon.common.util.ensure
 import cn.sabercon.common.util.getCurrentUserId
 import cn.sabercon.common.util.sha256
-import cn.sabercon.megumin.ctrl.SmsType
 import cn.sabercon.megumin.model.User
 import cn.sabercon.megumin.model.UserParam
 import cn.sabercon.megumin.repo.UserRepo
+import cn.sabercon.megumin.web.SmsType
+import org.springframework.stereotype.Service
 import kotlin.random.Random
 
-@WebController(["user"])
+@Service
 class UserService(private val smsService: SmsService, private val repo: UserRepo) {
 
     suspend fun login(type: LoginType, phone: String, code: String): String {
