@@ -19,6 +19,8 @@ enum class BaseCode(
     UNAUTHORIZED("401", "Unauthorized", HttpStatus.UNAUTHORIZED),
     I_AM_A_TEAPOT("418", "I'm a teapot", HttpStatus.I_AM_A_TEAPOT),
     INTERNAL_SERVER_ERROR("500", "Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR),
+    ILLEGAL_ARGUMENT("400", "Illegal argument", HttpStatus.BAD_REQUEST),
+    ILLEGAL_STATE("500", "Illegal state", HttpStatus.INTERNAL_SERVER_ERROR),
 
     INVALID_SMS_CODE("20001", "Invalid sms code"),
     LOGIN_ERROR("20002", "Invalid phone or password"),

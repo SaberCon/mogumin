@@ -14,11 +14,13 @@ object JwtUtils {
 
     private val verifier by lazy { JWT.require(algorithm).build() }
 
-    fun createToken(userId: Long) = JWT.create().withSubject(userId.toString())
+    fun createToken(userId: Long) = JWT.create()
+        .withSubject(userId.toString())
         .withExpiresAt(Date.from((now + EXPIRATION).toInstant(ZoneOffset.UTC)))
         .sign(algorithm)!!
 
-    fun decodeToken(token: String) = runCatching { verifier.verify(token) }.map { it.subject.toLong() }
+    fun decodeToken(token: String) = runCatching { verifier.verify(token) }
+        .map { it.subject.toLong() }
         .onFailure { log.debug("Error when decoding token: {}", it.message) }
         .getOrNull()
 }

@@ -20,9 +20,9 @@ class SmsController(
         service.checkCode(type, getPhone(type, phone), code)
 
     private suspend fun getPhone(type: Int, phone: String?): String {
-        return SmsType.values().firstOrNull { it.code == type }?.let {
-            if (it.authRequired) userService.getCurrentUser().phone else phone
-        } ?: BaseCode.BAD_REQUEST.throws()
+        return SmsType.values().firstOrNull { it.code == type }
+            ?.let { if (it.authRequired) userService.getCurrentUser().phone else phone }
+            ?: BaseCode.ILLEGAL_ARGUMENT.throws()
     }
 }
 

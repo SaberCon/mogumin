@@ -31,9 +31,9 @@ class UserController(private val service: UserService) {
 
     @PutMapping
     suspend fun update(@RequestBody param: UserParam) = service.update(param)
-
-    private fun maskPhoneNumber(phone: String) = phone.replaceRange(3..6, "****")
 }
+
+private fun maskPhoneNumber(phone: String) = phone.replaceRange(3..6, "****")
 
 data class LoginParam(
     val type: LoginType,

@@ -22,12 +22,12 @@ import kotlin.random.Random
 @EnableConfigurationProperties(AliyunProps::class)
 class AliyunClient(private val properties: AliyunProps) {
 
-    private val client = WebClient.builder().uriBuilderFactory(DefaultUriBuilderFactory().apply {
-        encodingMode = DefaultUriBuilderFactory.EncodingMode.NONE
-    }).build()
+    private val client = DefaultUriBuilderFactory()
+        .apply { encodingMode = DefaultUriBuilderFactory.EncodingMode.NONE }
+        .let { WebClient.builder().uriBuilderFactory(it).build() }
 
-    private val timeFormatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:SSS'Z'")!!
-    private val timeFormatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")!!
+    private val timeFormatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:SSS'Z'")
+    private val timeFormatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
     fun buildOssData(): OssData {
         val now = ZonedDateTime.now(ZoneOffset.UTC)
@@ -36,6 +36,7 @@ class AliyunClient(private val properties: AliyunProps) {
         val policy =
             """{"expiration":"${expiration.format(timeFormatter1)}","conditions":[["content-length-range",0,536870912],["starts-with","${'$'}key","$dir"]]}"""
                 .let { Base64Utils.encodeToString(it.encodeToByteArray()) }
+
         // TODO need to check if the sign is correct
         return OssData(
             accessId = properties.accessKeyId,
@@ -66,16 +67,20 @@ class AliyunClient(private val properties: AliyunProps) {
         val query = params.entries.joinToString("&") { "${specialUrlEncode(it.key)}=${specialUrlEncode(it.value)}" }
         val signature = specialUrlEncode(sign("GET&${specialUrlEncode("/")}&${specialUrlEncode(query)}"))
         val url = "https://dysmsapi.aliyuncs.com?Signature=$signature&$query"
-        client.get().uri(url).retrieve().awaitBody<String>()
-            .run { ensure(contains(""""Code":"OK"""")) { "Error when sending sms code, message: $this" } }
+
+        val response = client.get().uri(url).retrieve().awaitBody<String>()
+        ensure(response.contains(""""Code":"OK"""")) { "Error when sending sms code, message: $response" }
         return code
     }
 
     private fun specialUrlEncode(value: String) = URLEncoder.encode(value, Charsets.UTF_8)
-        .replace("+", "%20").replace("*", "%2A").replace("%7E", "~")
+        .replace("+", "%20")
+        .replace("*", "%2A")
+        .replace("%7E", "~")
 
     private fun sign(input: String) = Hashing.hmacSha1("${properties.accessKeySecret}&".toByteArray())
-        .hashString(input, Charsets.UTF_8).asBytes().let(Base64Utils::encodeToString)
+        .hashString(input, Charsets.UTF_8).asBytes()
+        .let(Base64Utils::encodeToString)
 }
 
 @ConstructorBinding

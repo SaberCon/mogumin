@@ -12,8 +12,8 @@ import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
 
 
-suspend fun getExchange(): ServerWebExchange =
-    Mono.deferContextual { it.toMono() }.awaitSingle()[ServerWebExchangeContextFilter.EXCHANGE_CONTEXT_ATTRIBUTE]
+suspend fun getExchange(): ServerWebExchange = Mono.deferContextual { it.toMono() }
+        .awaitSingle()[ServerWebExchangeContextFilter.EXCHANGE_CONTEXT_ATTRIBUTE]
 
 suspend fun getHeader(name: String) = getExchange().request.headers[name]?.getOrNull(0)
 

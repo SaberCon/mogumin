@@ -27,7 +27,12 @@ class UserService(private val smsService: SmsService, private val repo: UserRepo
     }
 
     private suspend fun register(phone: String): User {
-        return repo.save(User(phone = phone, avatar = DEFAULT_AVATAR, username = generateUsername()))
+        return User(
+            username = generateUsername(),
+            password = "",
+            phone = phone,
+            avatar = DEFAULT_AVATAR,
+        ).let { repo.save(it) }
     }
 
     private fun generateUsername() = "user${Random.nextInt(100_000_000).toString().padStart(8, '0')}"
@@ -50,7 +55,7 @@ class UserService(private val smsService: SmsService, private val repo: UserRepo
         repo.save(getCurrentUser().copy(username = param.username, avatar = param.avatar))
     }
 
-    suspend fun getCurrentUser() = repo.findById(getCurrentUserId()) ?: BaseCode.UNAUTHORIZED.throws()
+    suspend fun getCurrentUser() = repo.findById(getCurrentUserId()) ?: BaseCode.ILLEGAL_STATE.throws()
 }
 
 enum class LoginType { PWD, SMS }

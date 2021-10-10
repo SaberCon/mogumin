@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 data class User(
     @Id val id: Long = 0,
     val username: String,
-    val password: String? = null,
+    val password: String,
     val phone: String,
     val avatar: String,
     val ctime: LocalDateTime = EPOCH,
