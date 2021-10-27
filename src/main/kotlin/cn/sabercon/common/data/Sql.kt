@@ -8,15 +8,18 @@ import io.r2dbc.spi.ConnectionFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.ClassPathResource
-import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.data.r2dbc.mapping.event.BeforeConvertCallback
 import org.springframework.data.relational.core.mapping.NamingStrategy
 import org.springframework.data.relational.core.mapping.RelationalPersistentProperty
 import org.springframework.r2dbc.connection.init.ConnectionFactoryInitializer
 import org.springframework.r2dbc.connection.init.ResourceDatabasePopulator
+import org.springframework.transaction.ReactiveTransaction
+import org.springframework.transaction.reactive.TransactionalOperator
+import org.springframework.transaction.reactive.executeAndAwait
 import reactor.kotlin.core.publisher.toMono
 
-val SQL: R2dbcEntityTemplate by lazy { ContextHolder.getBean() }
+suspend fun <T : Any> tx(f: suspend (ReactiveTransaction) -> T?) =
+    ContextHolder.getBean<TransactionalOperator>().executeAndAwait(f)
 
 @Configuration
 class R2dbcConfig {
@@ -30,6 +33,7 @@ class R2dbcConfig {
 
     @Bean
     fun namingStrategy() = object : NamingStrategy {
+
         override fun getTableName(type: Class<*>) = "t_${super.getTableName(type)}"
 
         override fun getColumnName(property: RelationalPersistentProperty) = "f_${super.getColumnName(property)}"
@@ -43,5 +47,4 @@ class R2dbcConfig {
             else -> entity.copy(MTIME to now).toMono()
         }
     }
-
 }

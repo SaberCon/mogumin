@@ -11,14 +11,15 @@ fun main() {
     println("encrypted message: ${getEncryptor(key).encrypt(message)}")
 }
 
-fun getEncryptor(key: String) = SimpleStringPBEConfig().apply {
-    password = key
-    algorithm = "PBEWITHHMACSHA512ANDAES_256"
-    keyObtentionIterations = 1000
-    poolSize = 1
-    stringOutputType = "base64"
-    setSaltGeneratorClassName("org.jasypt.salt.RandomSaltGenerator")
-    setIvGeneratorClassName("org.jasypt.iv.RandomIvGenerator")
-}.let {
-    PooledPBEStringEncryptor().apply { setConfig(it) }
+fun getEncryptor(key: String): PooledPBEStringEncryptor {
+    val config = SimpleStringPBEConfig().apply {
+        password = key
+        algorithm = "PBEWITHHMACSHA512ANDAES_256"
+        keyObtentionIterations = 1000
+        poolSize = 1
+        stringOutputType = "base64"
+        setSaltGeneratorClassName("org.jasypt.salt.RandomSaltGenerator")
+        setIvGeneratorClassName("org.jasypt.iv.RandomIvGenerator")
+    }
+    return PooledPBEStringEncryptor().apply { setConfig(config) }
 }

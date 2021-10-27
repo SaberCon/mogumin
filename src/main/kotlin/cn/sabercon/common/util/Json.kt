@@ -33,6 +33,8 @@ val JSON = jacksonMapperBuilder()
     .addModules(TIME_MODULE)
     .build()!!
 
-fun Any?.toJson() = JSON.writeValueAsString(this)!!
+fun Any.toJson() = JSON.writeValueAsString(this)!!
+
+fun String.parseJsonNode() = JSON.readTree(this)!!
 
 inline fun <reified T : Any> String.parseJson(): T = JSON.readValue(this)

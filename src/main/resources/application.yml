@@ -2,8 +2,8 @@ spring:
   profiles:
     active: local
 aliyun:
-  access-key-id: ENC(cVpjiPlykbhz6cACd8WvtmfwVeceb+cZybY0D9+h844vZpEXZeYcjeEq+EB0ySbS19bwnouGcjQQaDJPCOwU/g==)
-  access-key-secret: ENC(UrBvVAKAXSVxXDX/n4D95cRw/gIlimShnjfJRxQDkSfcUvrsxJ1rat/tA6grAu8uEhcqp08vzqRqHq97MQ5qDQ==)
+  key-id: ENC(cVpjiPlykbhz6cACd8WvtmfwVeceb+cZybY0D9+h844vZpEXZeYcjeEq+EB0ySbS19bwnouGcjQQaDJPCOwU/g==)
+  key-secret: ENC(UrBvVAKAXSVxXDX/n4D95cRw/gIlimShnjfJRxQDkSfcUvrsxJ1rat/tA6grAu8uEhcqp08vzqRqHq97MQ5qDQ==)
   sms:
     sign-name: SaberCon
     template-code: SMS_175480786

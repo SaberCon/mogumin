@@ -13,4 +13,4 @@ inline fun ensure(value: Boolean, code: ErrorCode = BaseCode.BAD_REQUEST, lazyMe
 
 fun sha256(input: String) = MessageDigest.getInstance("SHA-256")
     .digest(input.toByteArray())
-    .let { Base64Utils.encodeToString(it) }
+    .let(Base64Utils::encodeToString)

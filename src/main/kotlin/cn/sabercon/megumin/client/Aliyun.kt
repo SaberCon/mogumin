@@ -1,6 +1,7 @@
-package cn.sabercon.common.client
+package cn.sabercon.megumin.client
 
-import cn.sabercon.common.util.ensure
+import cn.sabercon.common.throw400
+import cn.sabercon.common.util.log
 import cn.sabercon.common.util.minutes
 import com.google.common.hash.Hashing
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -11,6 +12,7 @@ import org.springframework.util.Base64Utils
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
 import org.springframework.web.util.DefaultUriBuilderFactory
+import org.springframework.web.util.DefaultUriBuilderFactory.EncodingMode.NONE
 import java.net.URLEncoder
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -22,24 +24,26 @@ import kotlin.random.Random
 @EnableConfigurationProperties(AliyunProps::class)
 class AliyunClient(private val properties: AliyunProps) {
 
-    private val client = DefaultUriBuilderFactory()
-        .apply { encodingMode = DefaultUriBuilderFactory.EncodingMode.NONE }
-        .let { WebClient.builder().uriBuilderFactory(it).build() }
+    private val client = WebClient.builder()
+        .uriBuilderFactory(DefaultUriBuilderFactory().apply { encodingMode = NONE })
+        .build()
 
-    private val timeFormatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:SSS'Z'")
-    private val timeFormatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
+    private val formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:SSS'Z'")
+    private val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
     fun buildOssData(): OssData {
         val now = ZonedDateTime.now(ZoneOffset.UTC)
         val expiration = now + 5.minutes
         val dir = "megumin/${now.year}/${now.monthValue}_${now.dayOfMonth}/"
-        val policy =
-            """{"expiration":"${expiration.format(timeFormatter1)}","conditions":[["content-length-range",0,536870912],["starts-with","${'$'}key","$dir"]]}"""
-                .let { Base64Utils.encodeToString(it.encodeToByteArray()) }
+        val policy = """{"expiration":"${expiration.format(formatter1)}",
+                |"conditions":[["content-length-range",0,536870912],["starts-with","${'$'}key","$dir"]]}"""
+            .trimMargin()
+            .toByteArray()
+            .let(Base64Utils::encodeToString)
 
         // TODO need to check if the sign is correct
         return OssData(
-            accessId = properties.accessKeyId,
+            accessId = properties.keyId,
             host = properties.oss.host,
             dir = dir,
             policy = policy,
@@ -51,11 +55,11 @@ class AliyunClient(private val properties: AliyunProps) {
     suspend fun sendSmsCode(phone: String): String {
         val code = Random.nextInt(10000, 20000).toString().drop(1)
         val params = mapOf(
-            "AccessKeyId" to properties.accessKeyId,
+            "AccessKeyId" to properties.keyId,
             "SignatureMethod" to "HMAC-SHA1",
             "SignatureNonce" to UUID.randomUUID().toString(),
             "SignatureVersion" to "1.0",
-            "Timestamp" to ZonedDateTime.now(ZoneOffset.UTC).format(timeFormatter2),
+            "Timestamp" to ZonedDateTime.now(ZoneOffset.UTC).format(formatter2),
             "Format" to "json",
             "Action" to "SendSms",
             "Version" to "2017-05-25",
@@ -69,7 +73,11 @@ class AliyunClient(private val properties: AliyunProps) {
         val url = "https://dysmsapi.aliyuncs.com?Signature=$signature&$query"
 
         val response = client.get().uri(url).retrieve().awaitBody<String>()
-        ensure(response.contains(""""Code":"OK"""")) { "Error when sending sms code, message: $response" }
+        if (!response.contains(""""Code":"OK"""")) {
+            log.warn("Error when sending sms code: {}", response)
+            throw400()
+        }
+
         return code
     }
 
@@ -78,7 +86,7 @@ class AliyunClient(private val properties: AliyunProps) {
         .replace("*", "%2A")
         .replace("%7E", "~")
 
-    private fun sign(input: String) = Hashing.hmacSha1("${properties.accessKeySecret}&".toByteArray())
+    private fun sign(input: String) = Hashing.hmacSha1("${properties.keySecret}&".toByteArray())
         .hashString(input, Charsets.UTF_8).asBytes()
         .let(Base64Utils::encodeToString)
 }
@@ -86,8 +94,8 @@ class AliyunClient(private val properties: AliyunProps) {
 @ConstructorBinding
 @ConfigurationProperties("aliyun")
 data class AliyunProps(
-    val accessKeyId: String,
-    val accessKeySecret: String,
+    val keyId: String,
+    val keySecret: String,
     val sms: SmsProps,
     val oss: OssProps,
 ) {

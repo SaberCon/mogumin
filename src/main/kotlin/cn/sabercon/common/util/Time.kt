@@ -15,10 +15,6 @@ fun String.toDatetimeOrNull() = runCatching { toDatetime() }.getOrNull()
 fun String.toDateOrNull() = runCatching { toDate() }.getOrNull()
 fun String.toTimeOrNull() = runCatching { toTime() }.getOrNull()
 
-fun LocalDateTime.format() = format(DATETIME_FMT)!!
-fun LocalDate.format() = format(DATE_FMT)!!
-fun LocalTime.format() = format(TIME_FMT)!!
-
 val LocalDateTime.epochSeconds get() = toEpochSecond(ZoneOffset.UTC)
 
 val Int.milliseconds get() = Duration.ofMillis(toLong())!!

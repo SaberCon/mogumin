@@ -12,8 +12,6 @@ fun <T : Any?> Any.getProperty(name: String): T {
     return this::class.memberProperties.first { it.name == name }.getter.call(this) as T
 }
 
-fun <T : Any?> Any.getPropertyOrNull(name: String) = runCatching { getProperty<T>(name) }.getOrNull()
-
 fun <T : Any> T.copy(vararg properties: Pair<String, Any?>): T {
     @Suppress("UNCHECKED_CAST")
     val copyMethod = this::class.memberFunctions.first { it.name == "copy" } as KFunction<T>

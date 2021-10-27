@@ -28,6 +28,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
@@ -36,8 +37,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
     implementation("com.google.guava:guava:30.1.1-jre")
-    implementation("org.springdoc:springdoc-openapi-webflux-ui:1.5.9")
-    implementation("org.springdoc:springdoc-openapi-kotlin:1.5.9")
     implementation("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3")
     implementation("com.auth0:java-jwt:3.16.0")
 

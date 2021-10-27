@@ -21,5 +21,4 @@ class JobRunner : ApplicationRunner {
     override fun run(args: ApplicationArguments) {
         // to run some ad-hoc tasks
     }
-
 }

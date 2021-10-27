@@ -1,8 +1,6 @@
 package cn.sabercon.common.data
 
-import cn.sabercon.common.util.getQueryParam
 import kotlinx.coroutines.flow.Flow
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
@@ -19,17 +17,13 @@ fun desc(vararg properties: String) = properties.map { Sort.Order.desc(it) }.let
 fun asc(vararg properties: KProperty<*>) = properties.map { asString(it) }.toTypedArray().let { asc(*it) }
 fun desc(vararg properties: KProperty<*>) = properties.map { asString(it) }.toTypedArray().let { desc(*it) }
 
-suspend fun pageable(sort: Sort = DEFAULT_SORT) = PageRequest.of(
-    (getQueryParam("p")?.toIntOrNull()?.takeIf { it > 0 } ?: 1) - 1,
-    getQueryParam("s")?.toIntOrNull()?.takeIf { it > 0 } ?: 20,
-    sort,
-)
-
 interface AssetRepository<T> : CoroutineCrudRepository<T, String> {
 
     suspend fun findByUserIdAndId(userId: Long, id: String): T?
 
     fun findByUserId(userId: Long, pageable: Pageable): Flow<T>
+
+    suspend fun deleteByUserIdAndId(userId: Long, id: String)
 
     suspend fun deleteByUserIdAndIdIn(userId: Long, ids: List<String>)
 }
