@@ -96,7 +96,7 @@ class WebClientConfig {
 
     @Bean
     fun webClient(builder: WebClient.Builder) = builder
-        .clientConnector(ReactorClientHttpConnector(HttpClient.create().responseTimeout(5.seconds)))
+        .clientConnector(ReactorClientHttpConnector(HttpClient.create().responseTimeout(30.seconds)))
         .codecs { it.defaultCodecs().maxInMemorySize(8 * 1000 * 1000) }
         .build()
 }

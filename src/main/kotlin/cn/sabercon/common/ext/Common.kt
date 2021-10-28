@@ -12,11 +12,6 @@ inline fun <reified T : Any> String.parse(): T {
 
     val obj: Any = when (T::class) {
         String::class -> this
-        Boolean::class -> toBoolean()
-        Int::class -> toInt()
-        Long::class -> toLong()
-        Float::class -> toFloat()
-        Double::class -> toDouble()
         LocalDateTime::class -> toDatetime()
         LocalDate::class -> toDate()
         LocalTime::class -> toTime()
@@ -27,7 +22,6 @@ inline fun <reified T : Any> String.parse(): T {
 
 fun Any.format(): String {
     return when (this) {
-        is String, is Boolean, is Number -> toString()
         is LocalDateTime -> format(DATETIME_FMT)
         is LocalDate -> format(DATE_FMT)
         is LocalTime -> format(TIME_FMT)

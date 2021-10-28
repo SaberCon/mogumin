@@ -4,13 +4,11 @@ import cn.sabercon.common.BaseCode
 import cn.sabercon.common.data.DEFAULT_SORT
 import cn.sabercon.common.data.ID
 import cn.sabercon.common.throw400
-import cn.sabercon.common.util.ContextHolder
 import cn.sabercon.common.util.ensure
 import kotlinx.coroutines.flow.Flow
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.web.reactive.function.server.*
-import javax.validation.Validator
 
 fun coRouter(basePath: String, routes: (CoRouterFunctionDsl.() -> Unit)) = coRouter { path(basePath).nest(routes) }
 
@@ -28,9 +26,7 @@ suspend fun CoRouterFunctionDsl.success(body: Any?) = when (body) {
 
 suspend inline fun <reified T : Any> CoRouterFunctionDsl.success(flow: Flow<T>) = ok().bodyAndAwait(flow)
 
-suspend inline fun <reified T : Any> ServerRequest.validatedBody() = awaitBodyOrNull<T>()
-    ?.also { ensure(ContextHolder.getBean<Validator>().validate(it).isEmpty()) }
-    ?: throw400()
+suspend inline fun <reified T : Any> ServerRequest.body() = awaitBodyOrNull<T>() ?: throw400()
 
 suspend inline fun <reified T : Any> ServerRequest.formParamOrNull(
     name: String,

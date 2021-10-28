@@ -3,6 +3,7 @@ package cn.sabercon.common.data
 import kotlinx.coroutines.flow.Flow
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty1
@@ -17,6 +18,7 @@ fun desc(vararg properties: String) = properties.map { Sort.Order.desc(it) }.let
 fun asc(vararg properties: KProperty<*>) = properties.map { asString(it) }.toTypedArray().let { asc(*it) }
 fun desc(vararg properties: KProperty<*>) = properties.map { asString(it) }.toTypedArray().let { desc(*it) }
 
+@NoRepositoryBean
 interface AssetRepository<T> : CoroutineCrudRepository<T, String> {
 
     suspend fun findByUserIdAndId(userId: Long, id: String): T?

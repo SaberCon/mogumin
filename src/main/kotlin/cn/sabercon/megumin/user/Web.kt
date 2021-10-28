@@ -38,7 +38,7 @@ class UserRouterConfig {
         }
 
         put {
-            handler.update(it.userId(), it.validatedBody())
+            handler.update(it.userId(), it.body())
             success()
         }
     }

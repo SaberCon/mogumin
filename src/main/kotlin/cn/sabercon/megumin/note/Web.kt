@@ -14,7 +14,7 @@ class NoteRouterConfig {
         get { success(handler.list(it.userId(), it.pageable())) }
 
         post {
-            handler.save(it.userId(), it.validatedBody())
+            handler.save(it.userId(), it.body())
             success()
         }
 
@@ -24,7 +24,7 @@ class NoteRouterConfig {
         }
 
         delete {
-            handler.delete(it.userId(), it.validatedBody<List<String>>())
+            handler.delete(it.userId(), it.body<List<String>>())
             success()
         }
     }
