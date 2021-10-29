@@ -1,6 +1,8 @@
-package cn.sabercon.common.data
+package cn.sabercon.common.data.r2dbc
 
-import cn.sabercon.common.util.ContextHolder
+import cn.sabercon.common.data.CTIME
+import cn.sabercon.common.data.ID
+import cn.sabercon.common.data.MTIME
 import cn.sabercon.common.util.copy
 import cn.sabercon.common.util.getProperty
 import cn.sabercon.common.util.now
@@ -13,13 +15,7 @@ import org.springframework.data.relational.core.mapping.NamingStrategy
 import org.springframework.data.relational.core.mapping.RelationalPersistentProperty
 import org.springframework.r2dbc.connection.init.ConnectionFactoryInitializer
 import org.springframework.r2dbc.connection.init.ResourceDatabasePopulator
-import org.springframework.transaction.ReactiveTransaction
-import org.springframework.transaction.reactive.TransactionalOperator
-import org.springframework.transaction.reactive.executeAndAwait
 import reactor.kotlin.core.publisher.toMono
-
-suspend fun <T : Any> tx(f: suspend (ReactiveTransaction) -> T?) =
-    ContextHolder.getBean<TransactionalOperator>().executeAndAwait(f)
 
 @Configuration
 class R2dbcConfig {

@@ -1,6 +1,6 @@
 package cn.sabercon.megumin.note
 
-import cn.sabercon.common.data.tx
+import cn.sabercon.common.data.r2dbc.tx
 import cn.sabercon.common.throw400
 import cn.sabercon.common.util.copyFromModel
 import cn.sabercon.common.util.copyToModel

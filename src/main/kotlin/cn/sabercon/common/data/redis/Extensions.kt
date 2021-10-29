@@ -1,4 +1,4 @@
-package cn.sabercon.common.data
+package cn.sabercon.common.data.redis
 
 import cn.sabercon.common.ext.format
 import cn.sabercon.common.ext.parse

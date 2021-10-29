@@ -1,7 +1,7 @@
 package cn.sabercon.megumin.sms
 
-import cn.sabercon.common.data.get
-import cn.sabercon.common.data.set
+import cn.sabercon.common.data.redis.get
+import cn.sabercon.common.data.redis.set
 import cn.sabercon.common.util.ensure
 import cn.sabercon.common.util.minutes
 import cn.sabercon.megumin.MeguminCode
