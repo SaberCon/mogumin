@@ -22,6 +22,7 @@ inline fun <reified T : Any> String.parse(): T {
 
 fun Any.format(): String {
     return when (this) {
+        is String -> this
         is LocalDateTime -> format(DATETIME_FMT)
         is LocalDate -> format(DATE_FMT)
         is LocalTime -> format(TIME_FMT)
