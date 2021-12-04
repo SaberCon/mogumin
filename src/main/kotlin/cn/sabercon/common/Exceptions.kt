@@ -1,7 +1,7 @@
 package cn.sabercon.common
 
 import org.springframework.beans.factory.ObjectProvider
-import org.springframework.boot.autoconfigure.web.WebProperties.Resources
+import org.springframework.boot.autoconfigure.web.WebProperties
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler
 import org.springframework.boot.web.reactive.error.ErrorAttributes
 import org.springframework.context.ApplicationContext
@@ -26,11 +26,11 @@ import java.util.stream.Collectors
 @Component
 class GlobalExceptionHandler(
     errorAttributes: ErrorAttributes,
-    resources: Resources,
+    webProperties: WebProperties,
     applicationContext: ApplicationContext,
     viewResolvers: ObjectProvider<ViewResolver>,
     serverCodecConfigurer: ServerCodecConfigurer,
-) : AbstractErrorWebExceptionHandler(errorAttributes, resources, applicationContext) {
+) : AbstractErrorWebExceptionHandler(errorAttributes, webProperties.resources, applicationContext) {
 
     init {
         setViewResolvers(viewResolvers.orderedStream().collect(Collectors.toList()))

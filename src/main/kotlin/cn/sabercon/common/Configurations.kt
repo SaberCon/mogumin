@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Primary
 import org.springframework.core.annotation.Order
 import org.springframework.core.convert.converter.Converter
 import org.springframework.format.FormatterRegistry
+import org.springframework.http.HttpHeaders
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.http.codec.ServerCodecConfigurer
 import org.springframework.http.codec.json.Jackson2JsonDecoder
@@ -74,8 +75,10 @@ class FilterConfig {
     @Bean
     @Order(2)
     fun loginFilter() = WebFilter { exchange, chain ->
-        exchange.attributes["userId"] = exchange.request.headers["token"]
+        exchange.attributes["userId"] = exchange.request.headers[HttpHeaders.AUTHORIZATION]
             ?.getOrNull(0)
+            ?.takeIf { it.startsWith("Bearer ", true) }
+            ?.substring("Bearer ".length)
             ?.let { JwtUtils.decodeToken(it) }
             ?: 0
 

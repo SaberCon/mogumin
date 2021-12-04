@@ -15,7 +15,7 @@ class NoteHandler(private val repo: NoteRepo) {
         return repo.findByUserIdAndId(userId, id)
     }
 
-    suspend fun list(userId: Long, pageable: Pageable): Flow<Note> {
+    fun list(userId: Long, pageable: Pageable): Flow<Note> {
         return repo.findByUserId(userId, pageable)
     }
 

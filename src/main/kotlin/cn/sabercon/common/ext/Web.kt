@@ -53,7 +53,7 @@ inline fun <reified T : Any> ServerRequest.pathParam(name: String, validator: (T
         .also { ensure(validator(it)) }
 
 fun ServerRequest.pageable(sort: Sort = DEFAULT_SORT) = PageRequest.of(
-    (requestParamOrNull("pn") { it > 0 } ?: 1) - 1,
+    (requestParamOrNull("pi") { it > 0 } ?: 1) - 1,
     requestParamOrNull("ps") { it > 0 } ?: 20,
     sort,
 )

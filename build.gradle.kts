@@ -23,6 +23,8 @@ repositories {
     mavenCentral()
 }
 
+extra["testcontainersVersion"] = "1.16.2"
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")

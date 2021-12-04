@@ -15,7 +15,7 @@ class ImageHandler(private val repo: ImageRepo) {
         return repo.findByUserIdAndId(userId, id)
     }
 
-    suspend fun list(userId: Long, pageable: Pageable): Flow<Image> {
+    fun list(userId: Long, pageable: Pageable): Flow<Image> {
         return repo.findByUserId(userId, pageable)
     }
 

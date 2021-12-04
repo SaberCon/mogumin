@@ -15,7 +15,7 @@ class FileHandler(private val repo: FileRepo) {
         return repo.findByUserIdAndId(userId, id)
     }
 
-    suspend fun list(userId: Long, pageable: Pageable): Flow<File> {
+    fun list(userId: Long, pageable: Pageable): Flow<File> {
         return repo.findByUserId(userId, pageable)
     }
 
