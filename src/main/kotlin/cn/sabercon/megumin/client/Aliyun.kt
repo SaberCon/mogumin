@@ -1,16 +1,13 @@
 package cn.sabercon.megumin.client
 
+import cn.sabercon.common.ext.get
 import cn.sabercon.common.throw400
-import cn.sabercon.common.util.log
-import cn.sabercon.common.util.minutes
-import com.google.common.hash.Hashing
+import cn.sabercon.common.util.*
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.stereotype.Component
-import org.springframework.util.Base64Utils
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.awaitBody
 import org.springframework.web.util.DefaultUriBuilderFactory
 import org.springframework.web.util.DefaultUriBuilderFactory.EncodingMode.NONE
 import java.net.URLEncoder
@@ -28,26 +25,27 @@ class AliyunClient(private val properties: AliyunProps) {
         .uriBuilderFactory(DefaultUriBuilderFactory().apply { encodingMode = NONE })
         .build()
 
-    private val formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:SSS'Z'")
+    private val formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
     fun buildOssData(): OssData {
         val now = ZonedDateTime.now(ZoneOffset.UTC)
-        val expiration = now + 5.minutes
+        val expiration = now + 10.minutes
         val dir = "megumin/${now.year}/${now.monthValue}_${now.dayOfMonth}/"
-        val policy = """{"expiration":"${expiration.format(formatter1)}",
-                |"conditions":[["content-length-range",0,536870912],["starts-with","${'$'}key","$dir"]]}"""
-            .trimMargin()
-            .toByteArray()
-            .let(Base64Utils::encodeToString)
+        val policy = mapOf(
+            "expiration" to expiration.format(formatter1),
+            "conditions" to listOf(
+                listOf("content-length-range", 0, 536870912),
+                listOf("starts-with", '$' + "key", dir),
+            )
+        ).toJson().let { base64(it) }
 
-        // TODO need to check if the sign is correct
         return OssData(
             accessId = properties.keyId,
             host = properties.oss.host,
             dir = dir,
             policy = policy,
-            signature = sign(policy),
+            signature = hmacSha1(properties.keySecret, policy),
             expire = expiration.toEpochSecond(),
         )
     }
@@ -69,10 +67,15 @@ class AliyunClient(private val properties: AliyunProps) {
             "PhoneNumbers" to phone,
         ).let(::TreeMap)
         val query = params.entries.joinToString("&") { "${specialUrlEncode(it.key)}=${specialUrlEncode(it.value)}" }
-        val signature = specialUrlEncode(sign("GET&${specialUrlEncode("/")}&${specialUrlEncode(query)}"))
+        val signature = specialUrlEncode(
+            hmacSha1(
+                properties.keySecret + '&',
+                "GET&${specialUrlEncode("/")}&${specialUrlEncode(query)}",
+            )
+        )
         val url = "https://dysmsapi.aliyuncs.com?Signature=$signature&$query"
 
-        val response = client.get().uri(url).retrieve().awaitBody<String>()
+        val response = client.get<String>(url)
         if (!response.contains(""""Code":"OK"""")) {
             log.warn("Error when sending sms code: {}", response)
             throw400()
@@ -85,10 +88,6 @@ class AliyunClient(private val properties: AliyunProps) {
         .replace("+", "%20")
         .replace("*", "%2A")
         .replace("%7E", "~")
-
-    private fun sign(input: String) = Hashing.hmacSha1("${properties.keySecret}&".toByteArray())
-        .hashString(input, Charsets.UTF_8).asBytes()
-        .let(Base64Utils::encodeToString)
 }
 
 @ConstructorBinding
