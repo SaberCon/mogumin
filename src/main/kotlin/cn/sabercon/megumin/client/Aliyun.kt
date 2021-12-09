@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.util.DefaultUriBuilderFactory
 import org.springframework.web.util.DefaultUriBuilderFactory.EncodingMode.NONE
-import java.net.URLEncoder
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -80,11 +79,12 @@ class AliyunClient(private val properties: AliyunProps) {
             log.warn("Error when sending sms code: {}", response)
             throw400()
         }
+        log.info("Sms code sending success. Code: {}", code)
 
         return code
     }
 
-    private fun specialUrlEncode(value: String) = URLEncoder.encode(value, Charsets.UTF_8)
+    private fun specialUrlEncode(value: String) = urlEncode(value)
         .replace("+", "%20")
         .replace("*", "%2A")
         .replace("%7E", "~")
