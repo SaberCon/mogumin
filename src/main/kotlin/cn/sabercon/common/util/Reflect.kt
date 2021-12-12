@@ -23,12 +23,15 @@ fun <T : Any> T.copy(vararg properties: Pair<String, Any?>): T {
         .let { copyMethod.callBy(it) }
 }
 
-fun <T : Any> T.copyFromModel(obj: Any, vararg properties: Pair<String, Any?>): T {
-    val totalProperties = obj::class.memberProperties.map { it.name to it.getter.call(obj) } + properties
+fun <T : Any> T.mergeData(obj: Any, vararg properties: Pair<KProperty1<T, *>, Any?>): T {
+    val sourceProperties = obj::class.memberProperties.map { it.name to it.getter.call(obj) }
+    val otherProperties = properties.map { it.first.name to it.second }
+    val totalProperties = sourceProperties + otherProperties
+
     return copy(*totalProperties.toTypedArray())
 }
 
-inline fun <reified T : Any> Any.copyToModel(vararg properties: Pair<KProperty1<T, *>, Any?>): T {
+inline fun <reified T : Any> Any.convertData(vararg properties: Pair<KProperty1<T, *>, Any?>): T {
     val sourceProperties = this::class.memberProperties.map { it.name to it.getter.call(this) }
     val otherProperties = properties.map { it.first.name to it.second }
     val totalProperties = sourceProperties + otherProperties

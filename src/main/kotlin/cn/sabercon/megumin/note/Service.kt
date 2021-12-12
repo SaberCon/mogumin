@@ -1,11 +1,11 @@
 package cn.sabercon.megumin.note
 
+import cn.sabercon.common.data.DEFAULT_SORT
 import cn.sabercon.common.data.r2dbc.tx
 import cn.sabercon.common.throw400
-import cn.sabercon.common.util.copyFromModel
-import cn.sabercon.common.util.copyToModel
+import cn.sabercon.common.util.convertData
+import cn.sabercon.common.util.mergeData
 import kotlinx.coroutines.flow.Flow
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
@@ -15,23 +15,19 @@ class NoteHandler(private val repo: NoteRepo) {
         return repo.findByUserIdAndId(userId, id)
     }
 
-    fun list(userId: Long, pageable: Pageable): Flow<Note> {
-        return repo.findByUserId(userId, pageable)
+    fun list(userId: Long): Flow<Note> {
+        return repo.findByUserId(userId, DEFAULT_SORT)
     }
 
     suspend fun save(userId: Long, param: NoteParam) = tx {
-        val image = when {
-            param.id.isEmpty() -> param.copyToModel(Note::userId to userId)
-            else -> get(userId, param.id)?.copyFromModel(param) ?: throw400()
+        val note = when (val id = param.id) {
+            "" -> param.convertData(Note::userId to userId)
+            else -> get(userId, id)?.mergeData(param) ?: throw400()
         }
-        repo.save(image)
+        repo.save(note)
     }
 
     suspend fun delete(userId: Long, id: String) = tx {
         repo.deleteByUserIdAndId(userId, id)
-    }
-
-    suspend fun delete(userId: Long, ids: List<String>) = tx {
-        repo.deleteByUserIdAndIdIn(userId, ids)
     }
 }

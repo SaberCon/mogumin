@@ -11,7 +11,7 @@ class NoteRouterConfig {
     fun noteRouter(handler: NoteHandler) = coRouter("/note") {
         get("/{id}") { success(handler.get(it.userId(), it.objectIdPathParam())) }
 
-        get { success(handler.list(it.userId(), it.pageable())) }
+        get { success(handler.list(it.userId())) }
 
         post {
             handler.save(it.userId(), it.body())
@@ -20,11 +20,6 @@ class NoteRouterConfig {
 
         delete("/{id}") {
             handler.delete(it.userId(), it.objectIdPathParam())
-            success()
-        }
-
-        delete {
-            handler.delete(it.userId(), it.body<List<String>>())
             success()
         }
     }

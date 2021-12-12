@@ -1,7 +1,7 @@
 package cn.sabercon.megumin.user
 
 import cn.sabercon.common.ext.*
-import cn.sabercon.common.util.copyToModel
+import cn.sabercon.common.util.convertData
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -19,7 +19,7 @@ class UserRouterConfig {
 
         get("/current") {
             val user = handler.getCurrentUser(it.userId())
-            success(user.copyToModel(CurrentUser::phone to maskPhoneNumber(user.phone)))
+            success(user.convertData(CurrentUser::phone to maskPhoneNumber(user.phone)))
         }
 
         put("/phone") {

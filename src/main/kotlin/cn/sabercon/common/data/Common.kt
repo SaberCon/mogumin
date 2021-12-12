@@ -1,10 +1,12 @@
 package cn.sabercon.common.data
 
+import cn.sabercon.common.Page
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.toList
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.repository.NoRepositoryBean
-import org.springframework.data.repository.kotlin.CoroutineCrudRepository
+import org.springframework.data.repository.kotlin.CoroutineSortingRepository
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty1
 
@@ -19,11 +21,18 @@ fun asc(vararg properties: KProperty<*>) = properties.map { asString(it) }.toTyp
 fun desc(vararg properties: KProperty<*>) = properties.map { asString(it) }.toTypedArray().let { desc(*it) }
 
 @NoRepositoryBean
-interface AssetRepository<T> : CoroutineCrudRepository<T, String> {
+interface AssetRepository<T : Any> : CoroutineSortingRepository<T, String> {
 
     suspend fun findByUserIdAndId(userId: Long, id: String): T?
 
+    fun findByUserId(userId: Long, sort: Sort): Flow<T>
+
     fun findByUserId(userId: Long, pageable: Pageable): Flow<T>
+
+    suspend fun countByUserId(userId: Long): Long
+
+    suspend fun findPageByUserId(userId: Long, pageable: Pageable) =
+        Page(countByUserId(userId), findByUserId(userId, pageable).toList())
 
     suspend fun deleteByUserIdAndId(userId: Long, id: String)
 
