@@ -1,10 +1,8 @@
 package cn.sabercon.megumin.user
 
-import cn.sabercon.common.throw500
+import cn.sabercon.common.throwClientError
 import cn.sabercon.common.util.JwtUtils
-import cn.sabercon.common.util.ensure
 import cn.sabercon.common.util.sha256
-import cn.sabercon.megumin.MeguminCode
 import cn.sabercon.megumin.sms.SmsHandler
 import cn.sabercon.megumin.sms.SmsType
 import org.springframework.stereotype.Service
@@ -16,9 +14,9 @@ class UserHandler(private val smsHandler: SmsHandler, private val repo: UserRepo
     suspend fun login(type: LoginType, phone: String, code: String): String {
         val user = when (type) {
             LoginType.PWD -> repo.findByPhone(phone)?.takeIf { it.password == sha256(code) }
-                ?: MeguminCode.LOGIN_ERROR.throws()
+                ?: throwClientError("Invalid phone or password")
             LoginType.SMS -> {
-                smsHandler.checkCode(SmsType.LOGIN.code, phone, code)
+                smsHandler.checkCode(SmsType.LOGIN, phone, code)
                 repo.findByPhone(phone) ?: register(phone)
             }
         }
@@ -36,28 +34,30 @@ class UserHandler(private val smsHandler: SmsHandler, private val repo: UserRepo
     }
 
     suspend fun updatePhone(userId: Long, phone: String, bindCode: String, unbindCode: String) {
-        val user = getCurrentUser(userId)
-        smsHandler.checkCode(SmsType.BIND_PHONE.code, phone, bindCode)
-        smsHandler.checkCode(SmsType.UNBIND_PHONE.code, user.phone, unbindCode)
-        ensure(!repo.existsByPhone(phone), MeguminCode.PHONE_BOUND)
+        val user = get(userId)
+        smsHandler.checkCode(SmsType.BIND_PHONE, phone, bindCode)
+        smsHandler.checkCode(SmsType.UNBIND_PHONE, user.phone, unbindCode)
+        if (repo.existsByPhone(phone)) {
+            throwClientError("This phone has been bound to other account")
+        }
         repo.save(user.copy(phone = phone))
     }
 
     suspend fun updatePwd(userId: Long, password: String, code: String) {
-        val user = getCurrentUser(userId)
-        smsHandler.checkCode(SmsType.UPDATE_PWD.code, user.phone, code)
+        val user = get(userId)
+        smsHandler.checkCode(SmsType.UPDATE_PWD, user.phone, code)
         repo.save(user.copy(password = sha256(password)))
     }
 
     suspend fun update(userId: Long, param: UserParam) {
-        val user = getCurrentUser(userId).copy(
+        val user = get(userId).copy(
             username = param.username,
             avatar = param.avatar,
         )
         repo.save(user)
     }
 
-    suspend fun getCurrentUser(userId: Long) = repo.findById(userId) ?: throw500()
+    suspend fun get(userId: Long) = repo.findById(userId)!!
 }
 
 private fun generateUsername() = "user${Random.nextInt(100_000_000).toString().padStart(8, '0')}"

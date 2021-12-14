@@ -21,6 +21,5 @@ object JwtUtils {
 
     fun decodeToken(token: String) = runCatching { verifier.verify(token) }
         .map { it.subject.toLong() }
-        .onFailure { log.warn("Error when decoding token {}: {}", token, it.message) }
         .getOrNull()
 }

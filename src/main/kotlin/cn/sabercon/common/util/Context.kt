@@ -22,6 +22,10 @@ class ContextHolder : ApplicationContextAware {
 
         inline fun <reified T : Any> getBean(): T = CONTEXT.getBean()
 
+        fun isLocal() = CONTEXT.environment.activeProfiles.contains("local")
+
+        fun isTest() = CONTEXT.environment.activeProfiles.contains("test")
+
         fun isProd() = CONTEXT.environment.activeProfiles.contains("prod")
     }
 }

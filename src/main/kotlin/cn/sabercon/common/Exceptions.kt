@@ -11,8 +11,7 @@ import org.springframework.http.codec.ServerCodecConfigurer
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.RequestPredicates.all
 import org.springframework.web.reactive.function.server.RouterFunctions.route
-import org.springframework.web.reactive.function.server.ServerResponse
-import org.springframework.web.reactive.function.server.json
+import org.springframework.web.reactive.function.server.ServerResponse.status
 import org.springframework.web.reactive.result.view.ViewResolver
 import org.springframework.web.server.ResponseStatusException
 import java.util.stream.Collectors
@@ -40,15 +39,15 @@ class GlobalExceptionHandler(
 
     override fun getRoutingFunction(errorAttributes: ErrorAttributes) = route(all()) {
         when (val error = errorAttributes.getError(it)) {
-            is ServiceException -> ServerResponse
-                .status(error.status)
-                .json()
-                .bodyValue(ErrorResponse<Nothing>(error.code, error.reason))
-            is ResponseStatusException -> ServerResponse.status(error.status).build()
-            else -> ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
+            is ServiceException -> status(error.status).bodyValue(ErrorResponse<Nothing>(error.code, error.reason))
+            is ResponseStatusException -> status(error.status).build()
+            else -> status(HttpStatus.INTERNAL_SERVER_ERROR).build()
         }
     }
 }
+
+class ServiceException(val code: String, status: HttpStatus, msg: String, cause: Throwable? = null) :
+ResponseStatusException(status, msg, cause)
 
 interface ErrorCode {
     val code: String
@@ -64,9 +63,10 @@ enum class BaseCode(override val code: String, override val msg: String, overrid
     INTERNAL_SERVER_ERROR("500", "Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR),
 }
 
-class ServiceException(val code: String, status: HttpStatus, msg: String, cause: Throwable? = null) :
-    ResponseStatusException(status, msg, cause)
+fun clientError(msg: String) = BaseCode.BAD_REQUEST.error(msg)
 
-fun throw400(): Nothing = BaseCode.BAD_REQUEST.throws()
+fun serverError(msg: String) = BaseCode.INTERNAL_SERVER_ERROR.error(msg)
 
-fun throw500(): Nothing = BaseCode.INTERNAL_SERVER_ERROR.throws()
+fun throwClientError(msg: String): Nothing = BaseCode.BAD_REQUEST.throws(msg)
+
+fun throwServerError(msg: String): Nothing = BaseCode.INTERNAL_SERVER_ERROR.throws(msg)

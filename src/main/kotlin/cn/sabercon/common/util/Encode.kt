@@ -17,5 +17,4 @@ fun sha256(input: String) = sha256(input.toByteArray())
 
 fun hmacSha1(key: ByteArray, input: ByteArray) = Hashing.hmacSha1(key).hashBytes(input).asBytes().let { base64(it) }
 
-fun hmacSha1(key: String, input: String) =
-    Hashing.hmacSha1(key.toByteArray()).hashString(input, Charsets.UTF_8).asBytes().let { base64(it) }
+fun hmacSha1(key: String, input: String) = hmacSha1(key.toByteArray(), input.toByteArray())

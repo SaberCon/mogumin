@@ -11,7 +11,7 @@ fun main() {
     println("encrypted message: ${getEncryptor(key).encrypt(message)}")
 }
 
-fun getEncryptor(key: String): PooledPBEStringEncryptor {
+private fun getEncryptor(key: String): PooledPBEStringEncryptor {
     val config = SimpleStringPBEConfig().apply {
         password = key
         algorithm = "PBEWITHHMACSHA512ANDAES_256"

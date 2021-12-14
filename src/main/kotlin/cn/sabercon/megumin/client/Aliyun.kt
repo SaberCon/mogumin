@@ -1,7 +1,7 @@
 package cn.sabercon.megumin.client
 
 import cn.sabercon.common.ext.get
-import cn.sabercon.common.throw400
+import cn.sabercon.common.throwClientError
 import cn.sabercon.common.util.*
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
@@ -77,9 +77,9 @@ class AliyunClient(private val properties: AliyunProps) {
         val response = client.get<String>(url)
         if (!response.contains(""""Code":"OK"""")) {
             log.warn("Error when sending sms code: {}", response)
-            throw400()
+            throwClientError("Sms code sending failed")
         }
-        log.info("Sms code sending success. Code: {}", code)
+        log.info("Sms code sending succeeded. Code: {}", code)
 
         return code
     }

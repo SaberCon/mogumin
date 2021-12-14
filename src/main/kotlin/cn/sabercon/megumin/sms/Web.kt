@@ -1,11 +1,10 @@
 package cn.sabercon.megumin.sms
 
 import cn.sabercon.common.ext.*
-import cn.sabercon.common.throw400
+import cn.sabercon.common.throwClientError
 import cn.sabercon.megumin.user.UserHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.web.reactive.function.server.ServerRequest
 
 @Configuration
 class SmsRouterConfig {
@@ -13,31 +12,25 @@ class SmsRouterConfig {
     @Bean
     fun smsRouter(handler: SmsHandler, userHandler: UserHandler) = coRouter("/sms") {
         get("/send") {
-            val type = it.requestParam<Int>("type")
-            val phone = it.getPhone() ?: userHandler.getCurrentUser(it.userId()).phone
+            val type = it.requestParam<Int>("type").toSmsType()
+            val phone = if (type.authRequired) userHandler.get(it.userId()).phone else it.requestParam("phone")
 
             handler.sendCode(type, phone)
             success()
         }
 
         get("/check") {
-            val type = it.requestParam<Int>("type")
-            val phone = it.getPhone() ?: userHandler.getCurrentUser(it.userId()).phone
+            val type = it.requestParam<Int>("type").toSmsType()
+            val phone = if (type.authRequired) userHandler.get(it.userId()).phone else it.requestParam("phone")
             val code = it.requestParam<String>("code")
 
             handler.checkCode(type, phone, code)
             success()
         }
     }
-
-    private fun ServerRequest.getPhone(): String? {
-        val type = requestParam<Int>("type")
-            .let { i -> SmsType.values().firstOrNull { it.code == i } }
-            ?: throw400()
-
-        return if (type.authRequired) null else requestParam("phone")
-    }
 }
+
+private fun Int.toSmsType() = SmsType.values().firstOrNull { it.code == this } ?: throwClientError("Wrong sms type")
 
 enum class SmsType(val code: Int, val authRequired: Boolean) {
     LOGIN(1, false),

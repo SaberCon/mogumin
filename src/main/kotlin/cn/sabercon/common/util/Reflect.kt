@@ -17,7 +17,6 @@ fun <T : Any> T.copy(vararg properties: Pair<String, Any?>): T {
     val copyMethod = this::class.memberFunctions.first { it.name == "copy" } as KFunction<T>
 
     return properties.toMap()
-        .filterKeys { key -> copyMethod.valueParameters.any { it.name != null && it.name == key } }
         .mapKeys { copyMethod.findParameterByName(it.key)!! }
         .plus(copyMethod.instanceParameter!! to this)
         .let { copyMethod.callBy(it) }
@@ -38,7 +37,6 @@ inline fun <reified T : Any> Any.convertData(vararg properties: Pair<KProperty1<
     val constructor = T::class.primaryConstructor!!
 
     return totalProperties.toMap()
-        .filterKeys { key -> constructor.valueParameters.any { it.name != null && it.name == key } }
         .mapKeys { constructor.findParameterByName(it.key)!! }
         .let { constructor.callBy(it) }
 }

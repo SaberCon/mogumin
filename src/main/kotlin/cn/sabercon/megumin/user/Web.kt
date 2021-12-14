@@ -18,7 +18,7 @@ class UserRouterConfig {
         }
 
         get("/current") {
-            val user = handler.getCurrentUser(it.userId())
+            val user = handler.get(it.userId())
             success(user.convertData(CurrentUser::phone to maskPhoneNumber(user.phone)))
         }
 

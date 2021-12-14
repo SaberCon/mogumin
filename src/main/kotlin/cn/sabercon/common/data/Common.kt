@@ -1,6 +1,7 @@
 package cn.sabercon.common.data
 
 import cn.sabercon.common.Page
+import cn.sabercon.common.ext.mapArray
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.toList
 import org.springframework.data.domain.Pageable
@@ -15,10 +16,10 @@ const val CTIME = "ctime"
 const val MTIME = "mtime"
 val DEFAULT_SORT = desc(ID)
 
-fun asc(vararg properties: String) = properties.map { Sort.Order.asc(it) }.let { Sort.by(it) }
-fun desc(vararg properties: String) = properties.map { Sort.Order.desc(it) }.let { Sort.by(it) }
-fun asc(vararg properties: KProperty<*>) = properties.map { asString(it) }.toTypedArray().let { asc(*it) }
-fun desc(vararg properties: KProperty<*>) = properties.map { asString(it) }.toTypedArray().let { desc(*it) }
+fun asc(vararg properties: String) = Sort.by(*properties).ascending()
+fun desc(vararg properties: String) = Sort.by(*properties).descending()
+fun asc(vararg properties: KProperty<*>) = asc(*properties.mapArray(::asString))
+fun desc(vararg properties: KProperty<*>) = desc(*properties.mapArray(::asString))
 
 @NoRepositoryBean
 interface AssetRepository<T : Any> : CoroutineSortingRepository<T, String> {
@@ -36,7 +37,7 @@ interface AssetRepository<T : Any> : CoroutineSortingRepository<T, String> {
 
     suspend fun deleteByUserIdAndId(userId: Long, id: String)
 
-    suspend fun deleteByUserIdAndIdIn(userId: Long, ids: List<String>)
+    suspend fun deleteByUserIdAndIdIn(userId: Long, ids: Collection<String>)
 }
 
 
