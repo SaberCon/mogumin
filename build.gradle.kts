@@ -6,7 +6,7 @@ plugins {
     kotlin("jvm") version "1.6.0"
     kotlin("plugin.spring") version "1.6.0"
 
-    id("com.google.cloud.tools.jib") version "3.1.1"
+    id("com.google.cloud.tools.jib") version "3.1.4"
 }
 
 group = "cn.sabercon"
@@ -69,7 +69,7 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-val mainClassKt = "cn.sabercon.megumin.MeguminApplicationKt"
+val mainClassKt = "cn.sabercon.megumin.AppKt"
 
 jib {
     container {
