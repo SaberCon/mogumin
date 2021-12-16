@@ -37,6 +37,7 @@ inline fun <reified T : Any> Any.convertData(vararg properties: Pair<KProperty1<
     val constructor = T::class.primaryConstructor!!
 
     return totalProperties.toMap()
+        .filterKeys { key -> constructor.valueParameters.any { it.name == key } }
         .mapKeys { constructor.findParameterByName(it.key)!! }
         .let { constructor.callBy(it) }
 }

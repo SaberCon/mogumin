@@ -57,7 +57,9 @@ class UserHandler(private val smsHandler: SmsHandler, private val repo: UserRepo
         repo.save(user)
     }
 
-    suspend fun get(userId: Long) = repo.findById(userId)!!
+    suspend fun get(userId: Long): User {
+        return repo.findById(userId)!!
+    }
 }
 
 private fun generateUsername() = "user${Random.nextInt(100_000_000).toString().padStart(8, '0')}"
