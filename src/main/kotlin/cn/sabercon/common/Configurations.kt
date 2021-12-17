@@ -16,6 +16,7 @@ import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.reactive.CorsWebFilter
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource
 import org.springframework.web.reactive.config.EnableWebFlux
+import org.springframework.web.reactive.config.ResourceHandlerRegistry
 import org.springframework.web.reactive.config.WebFluxConfigurer
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.server.WebFilter
@@ -27,6 +28,10 @@ import java.time.LocalTime
 @EnableWebFlux
 @Configuration
 class WebConfig : WebFluxConfigurer {
+
+    override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
+        registry.addResourceHandler("/**").addResourceLocations("classpath:/static/")
+    }
 
     override fun configureHttpMessageCodecs(configurer: ServerCodecConfigurer) {
         configurer.apply {
