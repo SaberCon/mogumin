@@ -7,4 +7,4 @@ spring:
     url: redis://${sabercon.default-password}@www.sabercon.cn:6379
   data:
     mongodb:
-      uri: mongodb://root:${sabercon.default-password}@www.sabercon.cn:27017/megumin
+      uri: mongodb://root:${sabercon.default-password}@www.sabercon.cn:27017/megumin?authSource=admin
