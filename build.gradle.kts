@@ -73,7 +73,7 @@ springBoot {
 }
 
 tasks.getByName<BootBuildImage>("bootBuildImage") {
-    imageName = System.getenv("IMAGE_NAME")
+    imageName = System.getenv("IMAGE_NAME").toLowerCase()
     isPublish = true
     docker {
         publishRegistry {
