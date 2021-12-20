@@ -17,6 +17,8 @@ env:
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
+  USERNAME: ${{ github.actor }}
+  PASSWORD: ${{ secrets.GITHUB_TOKEN }}
 
 
 jobs:
@@ -34,10 +36,5 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-      - name: Publish with Jib
-        # Jib cannot handle the image name correctly because my account contains uppercase letters
-        # So I write the image name hard-coded
-        run: |
-          ./gradlew jib -Djib.to.image="${{ env.REGISTRY }}/sabercon/megumin:latest" \
-            -Djib.to.auth.username="${{ github.actor }}" \
-            -Djib.to.auth.password="${{ secrets.GITHUB_TOKEN }}"
+      - name: Publish spring boot image
+        run: ./gradlew bootBuildImage

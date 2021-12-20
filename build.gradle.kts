@@ -1,12 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 
 plugins {
     id("org.springframework.boot") version "2.6.1"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.6.0"
     kotlin("plugin.spring") version "1.6.0"
-
-    id("com.google.cloud.tools.jib") version "3.1.4"
 }
 
 group = "cn.sabercon"
@@ -69,14 +68,18 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-val mainClassKt = "cn.sabercon.megumin.AppKt"
-
-jib {
-    container {
-        mainClass = mainClassKt
-    }
+springBoot {
+    mainClass.set("cn.sabercon.megumin.AppKt")
 }
 
-springBoot {
-    mainClass.set(mainClassKt)
+tasks.getByName<BootBuildImage>("bootBuildImage") {
+    imageName = System.getenv("IMAGE_NAME")
+    isPublish = true
+    docker {
+        publishRegistry {
+            username = System.getenv("USERNAME")
+            password = System.getenv("PASSWORD")
+            url = System.getenv("REGISTRY")
+        }
+    }
 }
