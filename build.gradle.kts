@@ -37,8 +37,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
     implementation("com.google.guava:guava:31.0.1-jre")
-    implementation("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3")
-    implementation("com.auth0:java-jwt:3.16.0")
+    implementation("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4")
+    implementation("com.auth0:java-jwt:3.18.2")
 
     runtimeOnly("io.r2dbc:r2dbc-postgresql")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
@@ -70,4 +70,14 @@ tasks.withType<Test> {
 
 springBoot {
     mainClass.set("cn.sabercon.megumin.AppKt")
+}
+
+tasks.getByName<BootBuildImage>("bootBuildImage") {
+    docker {
+        publishRegistry {
+            username = System.getenv("DOCKER_USERNAME")
+            password = System.getenv("DOCKER_PASSWORD")
+            url = System.getenv("DOCKER_REGISTRY")
+        }
+    }
 }

@@ -14,7 +14,9 @@ on:
 
 env:
   # Use docker.io for Docker Hub if empty
-  REGISTRY: ghcr.io
+  DOCKER_REGISTRY: ghcr.io
+  DOCKER_USERNAME: ${{ github.actor }}
+  DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   build:
@@ -33,6 +35,5 @@ jobs:
           distribution: 'adopt'
       - name: Build and publish image
         run: |
-          docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ${{ env.REGISTRY }}
           IMAGE_NAME=$(echo ${{ env.REGISTRY }}/${{ github.repository }} | tr '[:upper:]' '[:lower:]')
           ./gradlew bootBuildImage --imageName=$IMAGE_NAME --publishImage
