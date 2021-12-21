@@ -35,4 +35,4 @@ jobs:
         run: |
           docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ${{ env.REGISTRY }}
           IMAGE_NAME=$(echo ${{ env.REGISTRY }}/${{ github.repository }} | tr '[:upper:]' '[:lower:]')
-          ./gradlew bootBuildImage --imageName=IMAGE_NAME --publishImage
+          ./gradlew bootBuildImage --imageName=$IMAGE_NAME --publishImage
