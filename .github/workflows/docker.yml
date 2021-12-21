@@ -35,5 +35,5 @@ jobs:
           distribution: 'adopt'
       - name: Build and publish image
         run: |
-          IMAGE_NAME=$(echo ${{ env.REGISTRY }}/${{ github.repository }} | tr '[:upper:]' '[:lower:]')
+          IMAGE_NAME=$(echo ${{ env.DOCKER_REGISTRY }}/${{ github.repository }} | tr '[:upper:]' '[:lower:]')
           ./gradlew bootBuildImage --imageName=$IMAGE_NAME --publishImage
