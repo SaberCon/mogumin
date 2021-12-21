@@ -17,9 +17,6 @@ env:
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: ghcr.io/${{ github.repository }}
-  USERNAME: ${{ github.actor }}
-  PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-
 
 jobs:
   build:
@@ -37,4 +34,7 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
       - name: Build and publish image
-        run: ./gradlew bootBuildImage
+        run: |
+          docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ${{ env.REGISTRY }}
+          IMAGE_NAME=$(echo ${{ env.REGISTRY }}/${{ github.repository }} | tr '[:upper:]' '[:lower:]')
+          ./gradlew bootBuildImage --imageName=IMAGE_NAME --publishImage

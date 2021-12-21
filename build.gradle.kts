@@ -71,15 +71,3 @@ tasks.withType<Test> {
 springBoot {
     mainClass.set("cn.sabercon.megumin.AppKt")
 }
-
-tasks.getByName<BootBuildImage>("bootBuildImage") {
-    imageName = System.getenv("IMAGE_NAME").toLowerCase()
-    isPublish = true
-    docker {
-        publishRegistry {
-            username = System.getenv("USERNAME")
-            password = System.getenv("PASSWORD")
-            url = System.getenv("REGISTRY")
-        }
-    }
-}
