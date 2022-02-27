@@ -2,10 +2,7 @@ package cn.sabercon.megumin.note
 
 import cn.sabercon.common.data.CTIME
 import cn.sabercon.common.data.desc
-import cn.sabercon.common.data.r2dbc.tx
 import cn.sabercon.common.throwClientError
-import cn.sabercon.common.util.convertData
-import cn.sabercon.common.util.mergeData
 import kotlinx.coroutines.flow.Flow
 import org.springframework.stereotype.Service
 
@@ -20,15 +17,26 @@ class NoteHandler(private val repo: NoteRepo) {
         return repo.findByUserId(userId, desc(CTIME))
     }
 
-    suspend fun save(userId: Long, param: NoteParam) = tx {
-        val note = when (val id = param.id) {
-            "" -> param.convertData(Note::userId to userId)
-            else -> get(userId, id).mergeData(param)
-        }
+    suspend fun insert(userId: Long, param: NoteParam) {
+        val note = Note(
+            userId = userId,
+            title = param.title,
+            content = param.content,
+        )
         repo.save(note)
     }
 
-    suspend fun delete(userId: Long, id: String) = tx {
+    suspend fun update(userId: Long, id: String, param: NoteParam) {
+        val note = Note(
+            id = id,
+            userId = userId,
+            title = param.title,
+            content = param.content,
+        )
+        repo.save(note)
+    }
+
+    suspend fun delete(userId: Long, id: String) {
         repo.deleteByUserIdAndId(userId, id)
     }
 }

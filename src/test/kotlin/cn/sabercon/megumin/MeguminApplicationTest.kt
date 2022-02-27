@@ -2,7 +2,7 @@ package cn.sabercon.megumin
 
 import org.junit.jupiter.api.Test
 
-class MeguminApplicationTests {
+class MeguminApplicationTest {
 
     @Test
     fun `no test now`() {

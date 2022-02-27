@@ -9,8 +9,8 @@ import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus
 import org.springframework.http.codec.ServerCodecConfigurer
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.server.RequestPredicates.all
-import org.springframework.web.reactive.function.server.RouterFunctions.route
+import org.springframework.web.reactive.function.server.RequestPredicates
+import org.springframework.web.reactive.function.server.RouterFunctions
 import org.springframework.web.reactive.function.server.ServerResponse.status
 import org.springframework.web.reactive.result.view.ViewResolver
 import org.springframework.web.server.ResponseStatusException
@@ -37,30 +37,31 @@ class GlobalExceptionHandler(
         setMessageReaders(serverCodecConfigurer.readers)
     }
 
-    override fun getRoutingFunction(errorAttributes: ErrorAttributes) = route(all()) {
+    override fun getRoutingFunction(errorAttributes: ErrorAttributes) = RouterFunctions.route(RequestPredicates.all()) {
         when (val error = errorAttributes.getError(it)) {
-            is ServiceException -> status(error.status).bodyValue(ErrorResponse<Nothing>(error.code, error.reason))
+            is ServiceException -> status(error.status).bodyValue(ErrorResponse(error.code, error.message!!))
             is ResponseStatusException -> status(error.status).build()
             else -> status(HttpStatus.INTERNAL_SERVER_ERROR).build()
         }
     }
 }
 
-class ServiceException(val code: String, status: HttpStatus, msg: String, cause: Throwable? = null) :
-ResponseStatusException(status, msg, cause)
+data class ErrorResponse(val code: Int, val message: String)
+
+class ServiceException(val code: Int, val status: HttpStatus, message: String) : RuntimeException(message)
 
 interface ErrorCode {
-    val code: String
-    val msg: String
+    val code: Int
     val status: HttpStatus
-    fun error(msg: String = this.msg) = ServiceException(code, status, msg)
-    fun throws(msg: String = this.msg): Nothing = throw error(msg)
+    val message: String
+    fun error(msg: String = this.message) = ServiceException(code, status, msg)
+    fun throws(msg: String = this.message): Nothing = throw error(msg)
 }
 
-enum class BaseCode(override val code: String, override val msg: String, override val status: HttpStatus) : ErrorCode {
-    BAD_REQUEST("400", "Bad Request", HttpStatus.BAD_REQUEST),
-    UNAUTHORIZED("401", "Unauthorized", HttpStatus.UNAUTHORIZED),
-    INTERNAL_SERVER_ERROR("500", "Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR),
+enum class BaseCode(override val code: Int, override val message: String, override val status: HttpStatus) : ErrorCode {
+    BAD_REQUEST(400, "Bad Request", HttpStatus.BAD_REQUEST),
+    UNAUTHORIZED(401, "Unauthorized", HttpStatus.UNAUTHORIZED),
+    INTERNAL_SERVER_ERROR(500, "Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR),
 }
 
 fun clientError(msg: String) = BaseCode.BAD_REQUEST.error(msg)

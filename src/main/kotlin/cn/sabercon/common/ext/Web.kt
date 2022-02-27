@@ -3,6 +3,7 @@ package cn.sabercon.common.ext
 import cn.sabercon.common.BaseCode
 import cn.sabercon.common.data.ID
 import cn.sabercon.common.throwClientError
+import cn.sabercon.common.util.log
 import kotlinx.coroutines.flow.Flow
 import org.springframework.data.domain.PageRequest
 import org.springframework.web.reactive.function.server.*
@@ -12,7 +13,22 @@ fun coRouter(basePath: String, routes: (CoRouterFunctionDsl.() -> Unit)) = coRou
 fun CoRouterFunctionDsl.get(pattern: String = "", f: suspend (ServerRequest) -> ServerResponse) = GET(pattern, f)
 fun CoRouterFunctionDsl.post(pattern: String = "", f: suspend (ServerRequest) -> ServerResponse) = POST(pattern, f)
 fun CoRouterFunctionDsl.put(pattern: String = "", f: suspend (ServerRequest) -> ServerResponse) = PUT(pattern, f)
+fun CoRouterFunctionDsl.patch(pattern: String = "", f: suspend (ServerRequest) -> ServerResponse) = PATCH(pattern, f)
 fun CoRouterFunctionDsl.delete(pattern: String = "", f: suspend (ServerRequest) -> ServerResponse) = DELETE(pattern, f)
+
+fun CoRouterFunctionDsl.addApiLog(title: String) = filter { request, next ->
+    val start = System.currentTimeMillis()
+    val response = next(request)
+    val duration = System.currentTimeMillis() - start
+    log.info(
+        "[{}] API handle completed for {} {}, total time: {} ms",
+        title,
+        request.method(),
+        request.path(),
+        duration
+    )
+    response
+}
 
 suspend fun CoRouterFunctionDsl.success(body: Any? = null) = when (body) {
     null, Unit -> noContent().buildAndAwait()
@@ -21,8 +37,8 @@ suspend fun CoRouterFunctionDsl.success(body: Any? = null) = when (body) {
 
 suspend inline fun <reified T : Any> CoRouterFunctionDsl.success(flow: Flow<T>) = ok().bodyAndAwait(flow)
 
-suspend inline fun <reified T : Any> ServerRequest.body() =
-    awaitBodyOrNull<T>() ?: throwClientError("Empty request body")
+suspend inline fun <reified T : Any> ServerRequest.body(): T =
+    awaitBodyOrNull() ?: throwClientError("Empty request body")
 
 suspend inline fun <reified T : Any> ServerRequest.formParamOrNull(name: String): T? =
     awaitFormData().getFirst(name)?.parseInput()
@@ -37,13 +53,16 @@ inline fun <reified T : Any> ServerRequest.requestParam(name: String): T =
 
 inline fun <reified T : Any> ServerRequest.pathParam(name: String): T = pathVariable(name).parseInput()
 
-fun ServerRequest.pageable() = PageRequest.of(
-    (requestParamOrNull<Int>("pi")?.takeIf { it > 0 } ?: 1) - 1,
-    requestParamOrNull<Int>("ps")?.takeIf { it > 0 } ?: 10,
-)
-
 inline fun <reified T : Any> String.parseInput(): T =
-    runCatching { parse<T>() }.getOrElse { throwClientError("Invalid input") }
+    runCatching { parse<T>() }.getOrElse {
+        log.warn("Invalid input caught, message: {}", it.message)
+        throwClientError("Invalid input")
+    }
+
+fun ServerRequest.pageable() = PageRequest.of(
+    (requestParamOrNull<Int>("page")?.takeIf { it > 0 } ?: 1) - 1,
+    requestParamOrNull<Int>("size")?.takeIf { it > 0 } ?: 10,
+)
 
 fun ServerRequest.idPathParam() = pathParam<Long>(ID)
 

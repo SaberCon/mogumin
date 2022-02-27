@@ -1,7 +1,6 @@
 package cn.sabercon.megumin.user
 
 import cn.sabercon.common.ext.*
-import cn.sabercon.common.util.convertData
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -11,33 +10,34 @@ class UserRouterConfig {
     @Bean
     fun userRouter(handler: UserHandler) = coRouter("/user") {
         post("/login") {
-            val type = it.formParam<LoginType>("type")
-            val phone = it.formParam<String>("phone")
-            val code = it.formParam<String>("code")
+            val type: LoginType = it.formParam("type")
+            val phone: String = it.formParam("phone")
+            val code: String = it.formParam("code")
             success(handler.login(type, phone, code))
         }
 
         get("/current") {
             val user = handler.get(it.userId())
-            success(user.convertData(CurrentUser::phone to maskPhoneNumber(user.phone)))
+            val currentUser = CurrentUser(user.id, user.username, maskPhoneNumber(user.phone), user.avatar)
+            success(currentUser)
         }
 
-        put("/phone") {
-            val phone = it.formParam<String>("phone")
-            val bindCode = it.formParam<String>("bindCode")
-            val unbindCode = it.formParam<String>("unbindCode")
+        patch("/phone") {
+            val phone: String = it.formParam("phone")
+            val bindCode: String = it.formParam("bindCode")
+            val unbindCode: String = it.formParam("unbindCode")
             handler.updatePhone(it.userId(), phone, bindCode, unbindCode)
             success()
         }
 
-        put("/pwd") {
-            val password = it.formParam<String>("password")
-            val code = it.formParam<String>("code")
+        patch("/pwd") {
+            val password: String = it.formParam("password")
+            val code: String = it.formParam("code")
             handler.updatePwd(it.userId(), password, code)
             success()
         }
 
-        put {
+        patch {
             handler.update(it.userId(), it.body())
             success()
         }

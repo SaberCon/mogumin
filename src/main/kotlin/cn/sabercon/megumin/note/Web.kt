@@ -14,7 +14,12 @@ class NoteRouterConfig {
         get { success(handler.list(it.userId())) }
 
         post {
-            handler.save(it.userId(), it.body())
+            handler.insert(it.userId(), it.body())
+            success()
+        }
+
+        put("/{id}") {
+            handler.update(it.userId(), it.objectIdPathParam(), it.body())
             success()
         }
 
@@ -26,7 +31,6 @@ class NoteRouterConfig {
 }
 
 data class NoteParam(
-    val id: String = "",
     val title: String,
     val content: String,
 )

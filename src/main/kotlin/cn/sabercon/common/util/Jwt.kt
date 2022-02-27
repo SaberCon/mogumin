@@ -2,24 +2,26 @@ package cn.sabercon.common.util
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Component
 import java.time.ZoneOffset
 import java.util.*
 
-private val EXPIRATION = 30.days
+@Component
+class Jwt(@Value("\${sabercon.jwt-key}") key: String, @Value("\${sabercon.jwt-days:30}") expiration: Int) {
 
-object JwtUtils {
-    private val secretKey by lazy { ContextHolder.getProperty("sabercon.jwt-key") }
+    private val algorithm = Algorithm.HMAC256(key)
 
-    private val algorithm by lazy { Algorithm.HMAC256(secretKey) }
+    private val verifier = JWT.require(algorithm).build()
 
-    private val verifier by lazy { JWT.require(algorithm).build() }
+    private val expiration = expiration.days
 
-    fun createToken(userId: Long) = JWT.create()
+    fun createToken(userId: Long): String = JWT.create()
         .withSubject(userId.toString())
-        .withExpiresAt(Date.from((now + EXPIRATION).toInstant(ZoneOffset.UTC)))
+        .withExpiresAt(Date.from((now() + expiration).toInstant(ZoneOffset.UTC)))
         .sign(algorithm)!!
 
-    fun decodeToken(token: String) = runCatching { verifier.verify(token) }
+    fun decodeToken(token: String): Long? = runCatching { verifier.verify(token) }
         .map { it.subject.toLong() }
         .getOrNull()
 }

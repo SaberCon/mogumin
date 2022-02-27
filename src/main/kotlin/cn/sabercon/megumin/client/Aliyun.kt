@@ -37,7 +37,7 @@ class AliyunClient(private val properties: AliyunProps) {
                 listOf("content-length-range", 0, 536870912),
                 listOf("starts-with", '$' + "key", dir),
             )
-        ).toJson().let { base64(it) }
+        ).let { base64(it.toJson()) }
 
         return OssData(
             accessId = properties.keyId,

@@ -22,8 +22,6 @@ repositories {
     mavenCentral()
 }
 
-extra["testcontainersVersion"] = "1.16.2"
-
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
@@ -38,23 +36,13 @@ dependencies {
 
     implementation("com.google.guava:guava:31.0.1-jre")
     implementation("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4")
-    implementation("com.auth0:java-jwt:3.18.2")
+    implementation("com.auth0:java-jwt:3.18.3")
 
     runtimeOnly("io.r2dbc:r2dbc-postgresql")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
-    testImplementation("org.testcontainers:junit-jupiter")
-    testImplementation("org.testcontainers:mongodb")
-    testImplementation("org.testcontainers:postgresql")
-    testImplementation("org.testcontainers:r2dbc")
-}
-
-dependencyManagement {
-    imports {
-        mavenBom("org.testcontainers:testcontainers-bom:${property("testcontainersVersion")}")
-    }
 }
 
 tasks.withType<KotlinCompile> {
@@ -66,10 +54,6 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
-}
-
-springBoot {
-    mainClass.set("cn.sabercon.megumin.AppKt")
 }
 
 tasks.getByName<BootBuildImage>("bootBuildImage") {

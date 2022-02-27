@@ -1,7 +1,7 @@
 package cn.sabercon.megumin.user
 
 import cn.sabercon.common.throwClientError
-import cn.sabercon.common.util.JwtUtils
+import cn.sabercon.common.util.Jwt
 import cn.sabercon.common.util.sha256
 import cn.sabercon.megumin.sms.SmsHandler
 import cn.sabercon.megumin.sms.SmsType
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 import kotlin.random.Random
 
 @Service
-class UserHandler(private val smsHandler: SmsHandler, private val repo: UserRepo) {
+class UserHandler(private val smsHandler: SmsHandler, private val repo: UserRepo, private val jwt: Jwt) {
 
     suspend fun login(type: LoginType, phone: String, code: String): String {
         val user = when (type) {
@@ -20,7 +20,7 @@ class UserHandler(private val smsHandler: SmsHandler, private val repo: UserRepo
                 repo.findByPhone(phone) ?: register(phone)
             }
         }
-        return JwtUtils.createToken(user.id)
+        return jwt.createToken(user.id)
     }
 
     private suspend fun register(phone: String): User {
@@ -60,8 +60,8 @@ class UserHandler(private val smsHandler: SmsHandler, private val repo: UserRepo
     suspend fun get(userId: Long): User {
         return repo.findById(userId)!!
     }
-}
 
-private fun generateUsername() = "user${Random.nextInt(100_000_000).toString().padStart(8, '0')}"
+    private fun generateUsername(): String = "user${Random.nextInt(100_000_000).toString().padStart(8, '0')}"
+}
 
 private const val DEFAULT_AVATAR = "http://oss.sabercon.cn/base/takagi.jpg"

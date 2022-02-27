@@ -2,9 +2,9 @@ server:
   port: 8080
 spring:
   r2dbc:
-    url: r2dbc:postgresql://root:${sabercon.default-password}@www.sabercon.cn:5432/megumin
+    url: r2dbc:postgresql://root:${sabercon.default-password}@sabercon.cn:5432/megumin
   redis:
-    url: redis://${sabercon.default-password}@www.sabercon.cn:6379
+    url: redis://${sabercon.default-password}@sabercon.cn:6379
   data:
     mongodb:
-      uri: mongodb://root:${sabercon.default-password}@www.sabercon.cn:27017/megumin?authSource=admin
+      uri: mongodb://root:${sabercon.default-password}@sabercon.cn:27017/megumin?authSource=admin

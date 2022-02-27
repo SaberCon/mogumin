@@ -23,4 +23,6 @@ val Int.minutes get() = Duration.ofMinutes(toLong())!!
 val Int.hours get() = Duration.ofHours(toLong())!!
 val Int.days get() = Duration.ofDays(toLong())!!
 
-val now get() = LocalDateTime.now()!!
+fun now() = LocalDateTime.now()!!
+
+fun justNow() = now().minusMinutes(1)!!

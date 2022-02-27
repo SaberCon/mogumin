@@ -3,8 +3,7 @@ package cn.sabercon.common.data.r2dbc
 import cn.sabercon.common.data.CTIME
 import cn.sabercon.common.data.ID
 import cn.sabercon.common.data.MTIME
-import cn.sabercon.common.util.copy
-import cn.sabercon.common.util.getProperty
+import cn.sabercon.common.util.UnsafeReflection
 import cn.sabercon.common.util.now
 import io.r2dbc.spi.ConnectionFactory
 import org.springframework.context.annotation.Bean
@@ -23,8 +22,7 @@ class R2dbcConfig {
     @Bean
     fun initializer(connectionFactory: ConnectionFactory) = ConnectionFactoryInitializer().apply {
         setConnectionFactory(connectionFactory)
-        val resource = ResourceDatabasePopulator(ClassPathResource("schema.sql"))
-        setDatabasePopulator(resource)
+        setDatabasePopulator(ResourceDatabasePopulator(ClassPathResource("schema.sql")))
     }
 
     @Bean
@@ -37,10 +35,12 @@ class R2dbcConfig {
 
     @Bean
     fun sqlBeforeConvertCallback() = BeforeConvertCallback<Any> { entity, _ ->
-        val id: Long = entity.getProperty(ID)
+        val id: Long = UnsafeReflection.get(entity, ID)
+        val now = now()
+
         when {
-            id <= 0 -> entity.copy(CTIME to now, MTIME to now).toMono()
-            else -> entity.copy(MTIME to now).toMono()
+            id <= 0 -> UnsafeReflection.modifyData(entity, CTIME to now, MTIME to now).toMono()
+            else -> UnsafeReflection.modifyData(entity, MTIME to now).toMono()
         }
     }
 }

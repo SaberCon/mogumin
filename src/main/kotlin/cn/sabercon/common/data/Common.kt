@@ -1,7 +1,6 @@
 package cn.sabercon.common.data
 
 import cn.sabercon.common.Page
-import cn.sabercon.common.ext.mapArray
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.toList
 import org.springframework.data.domain.Pageable
@@ -14,12 +13,11 @@ import kotlin.reflect.KProperty1
 const val ID = "id"
 const val CTIME = "ctime"
 const val MTIME = "mtime"
-val DEFAULT_SORT = desc(ID)
 
 fun asc(vararg properties: String) = Sort.by(*properties).ascending()
 fun desc(vararg properties: String) = Sort.by(*properties).descending()
-fun asc(vararg properties: KProperty<*>) = asc(*properties.mapArray(::asString))
-fun desc(vararg properties: KProperty<*>) = desc(*properties.mapArray(::asString))
+fun asc(vararg properties: KProperty<*>) = asc(*properties.map { asString(it) }.toTypedArray())
+fun desc(vararg properties: KProperty<*>) = desc(*properties.map { asString(it) }.toTypedArray())
 
 @NoRepositoryBean
 interface AssetRepository<T : Any> : CoroutineSortingRepository<T, String> {

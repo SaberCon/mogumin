@@ -12,25 +12,26 @@ class SmsRouterConfig {
     @Bean
     fun smsRouter(handler: SmsHandler, userHandler: UserHandler) = coRouter("/sms") {
         get("/send") {
-            val type = it.requestParam<Int>("type").toSmsType()
-            val phone = if (type.authRequired) userHandler.get(it.userId()).phone else it.requestParam("phone")
+            val type: SmsType = it.requestParam<Int>("type").toSmsType()
+            val phone: String = if (type.authRequired) userHandler.get(it.userId()).phone else it.requestParam("phone")
 
             handler.sendCode(type, phone)
             success()
         }
 
         get("/check") {
-            val type = it.requestParam<Int>("type").toSmsType()
-            val phone = if (type.authRequired) userHandler.get(it.userId()).phone else it.requestParam("phone")
-            val code = it.requestParam<String>("code")
+            val type: SmsType = it.requestParam<Int>("type").toSmsType()
+            val phone: String = if (type.authRequired) userHandler.get(it.userId()).phone else it.requestParam("phone")
+            val code: String = it.requestParam("code")
 
             handler.checkCode(type, phone, code)
             success()
         }
     }
-}
 
-private fun Int.toSmsType() = SmsType.values().firstOrNull { it.code == this } ?: throwClientError("Wrong sms type")
+    private fun Int.toSmsType(): SmsType =
+        SmsType.values().firstOrNull { it.code == this } ?: throwClientError("Wrong sms type")
+}
 
 enum class SmsType(val code: Int, val authRequired: Boolean) {
     LOGIN(1, false),

@@ -3,6 +3,7 @@ package cn.sabercon.common.util
 import org.springframework.beans.factory.getBean
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
+import org.springframework.core.env.Environment
 import org.springframework.stereotype.Component
 
 @Component
@@ -14,18 +15,24 @@ class ContextHolder : ApplicationContextAware {
 
     companion object {
 
-        lateinit var CONTEXT: ApplicationContext
+        private lateinit var CONTEXT: ApplicationContext
 
-        fun getProperty(key: String, defaultValue: String = "") = CONTEXT.environment.getProperty(key) ?: defaultValue
+        fun getContext(): ApplicationContext = CONTEXT
 
-        inline fun <reified T : Any> getBean(name: String): T = CONTEXT.getBean<T>(name)
+        fun getEnv(): Environment = getContext().environment
 
-        inline fun <reified T : Any> getBean(): T = CONTEXT.getBean()
+        inline fun <reified T : Any> getBean(name: String): T = getContext().getBean<T>(name)
 
-        fun isLocal() = CONTEXT.environment.activeProfiles.contains("local")
+        inline fun <reified T : Any> getBean(): T = getContext().getBean()
 
-        fun isTest() = CONTEXT.environment.activeProfiles.contains("test")
+        fun getProperty(key: String, defaultValue: String = ""): String = getEnv().getProperty(key) ?: defaultValue
 
-        fun isProd() = CONTEXT.environment.activeProfiles.contains("prod")
+        fun getProfiles(): Array<String> = getEnv().activeProfiles
+
+        fun isLocal() = getProfiles().contains("local")
+
+        fun isTest() = getProfiles().contains("test")
+
+        fun isProd() = getProfiles().contains("prod")
     }
 }
