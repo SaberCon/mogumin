@@ -6,6 +6,7 @@ plugins {
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.6.0"
     kotlin("plugin.spring") version "1.6.0"
+    id("com.google.devtools.ksp") version "1.6.0-1.0.2"
 }
 
 group = "cn.sabercon"
@@ -15,6 +16,15 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 configurations {
     compileOnly {
         extendsFrom(configurations.annotationProcessor.get())
+    }
+}
+
+kotlin {
+    sourceSets.main {
+        kotlin.srcDir("build/generated/ksp/main/kotlin")
+    }
+    sourceSets.test {
+        kotlin.srcDir("build/generated/ksp/test/kotlin")
     }
 }
 
@@ -37,6 +47,12 @@ dependencies {
     implementation("com.google.guava:guava:31.0.1-jre")
     implementation("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4")
     implementation("com.auth0:java-jwt:3.18.3")
+
+    implementation(platform("io.arrow-kt:arrow-stack:1.0.1"))
+    implementation("io.arrow-kt:arrow-core")
+    implementation("io.arrow-kt:arrow-fx-coroutines")
+    implementation("io.arrow-kt:arrow-optics")
+    ksp("io.arrow-kt:arrow-optics-ksp-plugin:1.0.3-alpha.1")
 
     runtimeOnly("io.r2dbc:r2dbc-postgresql")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
