@@ -43,7 +43,7 @@ services:
     ports:
       - '8080:8080'
     environment:
-      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_ACTIVATE_ON_PROFILE: prod
       JASYPT_ENCRYPTOR_PASSWORD: ${KEY}
     depends_on:
       - postgres
