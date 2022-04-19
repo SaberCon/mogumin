@@ -1,14 +1,9 @@
 {
   "properties": [
     {
-      "name": "sabercon.default-password",
+      "name": "sabercon.secret",
       "type": "java.lang.String",
       "description": "The default password to connect to databases or other middlewares."
-    },
-    {
-      "name": "sabercon.jwt-key",
-      "type": "java.lang.String",
-      "description": "The secret key of JWT. Should never be leaked."
     }
   ]
 }

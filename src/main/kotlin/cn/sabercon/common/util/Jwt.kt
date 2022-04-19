@@ -8,7 +8,7 @@ import java.time.ZoneOffset
 import java.util.*
 
 @Component
-class Jwt(@Value("\${sabercon.jwt-key}") key: String, @Value("\${sabercon.jwt-days:30}") expiration: Int) {
+class Jwt(@Value("\${sabercon.secret}") key: String, @Value("\${sabercon.jwt-days:30}") expiration: Int) {
 
     private val algorithm = Algorithm.HMAC256(key)
 
