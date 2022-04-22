@@ -1,6 +1,10 @@
 package cn.sabercon.megumin.aliyun
 
-import cn.sabercon.common.util.*
+import cn.sabercon.common.util.base64
+import cn.sabercon.common.util.hmacSha1
+import cn.sabercon.common.util.log
+import cn.sabercon.common.util.toJson
+import cn.sabercon.common.util.urlEncode
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.EnableConfigurationProperties

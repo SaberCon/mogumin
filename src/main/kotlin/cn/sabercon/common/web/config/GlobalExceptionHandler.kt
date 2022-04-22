@@ -15,7 +15,7 @@ import org.springframework.web.reactive.function.server.RouterFunctions
 import org.springframework.web.reactive.function.server.ServerResponse.status
 import org.springframework.web.reactive.result.view.ViewResolver
 import org.springframework.web.server.ResponseStatusException
-import java.util.stream.Collectors
+import java.util.stream.*
 
 /**
  * Order(-2) is to give it a higher priority than the

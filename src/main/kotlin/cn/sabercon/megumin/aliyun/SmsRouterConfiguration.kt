@@ -1,6 +1,10 @@
 package cn.sabercon.megumin.aliyun
 
-import cn.sabercon.common.web.*
+import cn.sabercon.common.web.body
+import cn.sabercon.common.web.empty
+import cn.sabercon.common.web.requestParam
+import cn.sabercon.common.web.throws
+import cn.sabercon.common.web.userId
 import cn.sabercon.megumin.user.UserHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

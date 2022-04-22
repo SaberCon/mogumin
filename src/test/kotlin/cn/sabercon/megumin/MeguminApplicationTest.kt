@@ -6,5 +6,6 @@ class MeguminApplicationTest {
 
     @Test
     fun `a test`() {
+        // Add tests here
     }
 }

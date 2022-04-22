@@ -7,7 +7,7 @@ const val ID = "id"
 const val CTIME = "ctime"
 const val MTIME = "mtime"
 
-fun asc(vararg properties: String): Sort = Sort.by(*properties).ascending()
-fun desc(vararg properties: String): Sort = Sort.by(*properties).descending()
-fun asc(vararg properties: KProperty<*>): Sort = asc(*properties.map { asString(it) }.toTypedArray())
-fun desc(vararg properties: KProperty<*>): Sort = desc(*properties.map { asString(it) }.toTypedArray())
+fun asc(vararg properties: String): Sort = Sort.by(Sort.Direction.ASC, *properties)
+fun desc(vararg properties: String): Sort = Sort.by(Sort.Direction.DESC, *properties)
+fun asc(vararg properties: KProperty<*>): Sort = Sort.by(properties.map { Sort.Order.asc(asString(it)) })
+fun desc(vararg properties: KProperty<*>): Sort = Sort.by(properties.map { Sort.Order.desc(asString(it)) })

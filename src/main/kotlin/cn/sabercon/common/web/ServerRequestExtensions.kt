@@ -3,7 +3,11 @@ package cn.sabercon.common.web
 import cn.sabercon.common.util.parse
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.UNAUTHORIZED
-import org.springframework.web.reactive.function.server.*
+import org.springframework.web.reactive.function.server.ServerRequest
+import org.springframework.web.reactive.function.server.attributeOrNull
+import org.springframework.web.reactive.function.server.awaitBodyOrNull
+import org.springframework.web.reactive.function.server.awaitFormData
+import org.springframework.web.reactive.function.server.queryParamOrNull
 
 suspend inline fun <reified T : Any> ServerRequest.body(): T {
     return awaitBodyOrNull() ?: BAD_REQUEST.throws()
@@ -18,7 +22,7 @@ suspend inline fun <reified T : Any> ServerRequest.formParam(name: String): T {
 }
 
 inline fun <reified T : Any> ServerRequest.requestParamOrNull(name: String): T? {
-    return queryParamOrNull(name)?.parse() ?: BAD_REQUEST.throws()
+    return queryParamOrNull(name)?.parse()
 }
 
 inline fun <reified T : Any> ServerRequest.requestParam(name: String): T {
