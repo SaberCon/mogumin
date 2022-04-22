@@ -1,7 +1,15 @@
 spring:
-  config:
-    activate:
-      on-profile: local
+  profiles:
+    active: local
+  graphql:
+    graphiql:
+      enabled: true
+    schema:
+      printer:
+        enabled: true
+    cors:
+      allowed-methods: GET, POST
+      allowed-origin-patterns: *
 aliyun:
   key-id: ENC(cVpjiPlykbhz6cACd8WvtmfwVeceb+cZybY0D9+h844vZpEXZeYcjeEq+EB0ySbS19bwnouGcjQQaDJPCOwU/g==)
   key-secret: ENC(UrBvVAKAXSVxXDX/n4D95cRw/gIlimShnjfJRxQDkSfcUvrsxJ1rat/tA6grAu8uEhcqp08vzqRqHq97MQ5qDQ==)
@@ -12,4 +20,5 @@ aliyun:
     endpoint: oss-cn-shenzhen.aliyuncs.com
     bucket: motto
     host: http://oss.sabercon.cn
+
 sabercon.secret: ENC(dEJKRMTx4Z+iYr9fncOkqs11FpfRP57QoPPu5KJc6pyNTsVQmDTpNjtLIAoMLBGv)

@@ -3,7 +3,7 @@
     {
       "name": "sabercon.secret",
       "type": "java.lang.String",
-      "description": "The default password to connect to databases or other middlewares."
+      "description": "The default secret."
     }
   ]
 }

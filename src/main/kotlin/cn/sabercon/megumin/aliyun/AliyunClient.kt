@@ -1,15 +1,15 @@
-package cn.sabercon.megumin.client
+package cn.sabercon.megumin.aliyun
 
-import cn.sabercon.common.ext.get
-import cn.sabercon.common.throwClientError
 import cn.sabercon.common.util.*
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.awaitBody
 import org.springframework.web.util.DefaultUriBuilderFactory
 import org.springframework.web.util.DefaultUriBuilderFactory.EncodingMode.NONE
+import java.time.Duration
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -29,7 +29,7 @@ class AliyunClient(private val properties: AliyunProps) {
 
     fun buildOssData(): OssData {
         val now = ZonedDateTime.now(ZoneOffset.UTC)
-        val expiration = now + 10.minutes
+        val expiration = now + Duration.ofMinutes(10)
         val dir = "megumin/${now.year}/${now.monthValue}_${now.dayOfMonth}/"
         val policy = mapOf(
             "expiration" to expiration.format(formatter1),
@@ -66,20 +66,18 @@ class AliyunClient(private val properties: AliyunProps) {
             "PhoneNumbers" to phone,
         ).let(::TreeMap)
         val query = params.entries.joinToString("&") { "${specialUrlEncode(it.key)}=${specialUrlEncode(it.value)}" }
-        val signature = specialUrlEncode(
-            hmacSha1(
-                properties.keySecret + '&',
-                "GET&${specialUrlEncode("/")}&${specialUrlEncode(query)}",
-            )
-        )
+        val signature = hmacSha1(
+            properties.keySecret + '&',
+            "GET&${specialUrlEncode("/")}&${specialUrlEncode(query)}",
+        ).let { specialUrlEncode(it) }
         val url = "https://dysmsapi.aliyuncs.com?Signature=$signature&$query"
 
-        val response = client.get<String>(url)
+        val response: String = client.get().uri(url).retrieve().awaitBody()
         if (!response.contains(""""Code":"OK"""")) {
             log.warn("Error when sending sms code: {}", response)
-            throwClientError("Sms code sending failed")
+        } else {
+            log.info("Sms code sending succeeded. Code: {}", code)
         }
-        log.info("Sms code sending succeeded. Code: {}", code)
 
         return code
     }

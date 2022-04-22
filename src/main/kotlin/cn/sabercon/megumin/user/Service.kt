@@ -1,10 +1,11 @@
 package cn.sabercon.megumin.user
 
-import cn.sabercon.common.throwClientError
-import cn.sabercon.common.util.Jwt
+import cn.sabercon.common.Jwt
 import cn.sabercon.common.util.sha256
-import cn.sabercon.megumin.sms.SmsHandler
-import cn.sabercon.megumin.sms.SmsType
+import cn.sabercon.common.web.throws
+import cn.sabercon.megumin.aliyun.SmsHandler
+import cn.sabercon.megumin.aliyun.SmsType
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import kotlin.random.Random
 
@@ -14,7 +15,7 @@ class UserHandler(private val smsHandler: SmsHandler, private val repo: UserRepo
     suspend fun login(type: LoginType, phone: String, code: String): String {
         val user = when (type) {
             LoginType.PWD -> repo.findByPhone(phone)?.takeIf { it.password == sha256(code) }
-                ?: throwClientError("Invalid phone or password")
+                ?: HttpStatus.BAD_REQUEST.throws()
             LoginType.SMS -> {
                 smsHandler.checkCode(SmsType.LOGIN, phone, code)
                 repo.findByPhone(phone) ?: register(phone)
@@ -38,7 +39,7 @@ class UserHandler(private val smsHandler: SmsHandler, private val repo: UserRepo
         smsHandler.checkCode(SmsType.BIND_PHONE, phone, bindCode)
         smsHandler.checkCode(SmsType.UNBIND_PHONE, user.phone, unbindCode)
         if (repo.existsByPhone(phone)) {
-            throwClientError("This phone has been bound to other account")
+            HttpStatus.BAD_REQUEST.throws()
         }
         repo.save(user.copy(phone = phone))
     }

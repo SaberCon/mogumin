@@ -2,15 +2,14 @@ package cn.sabercon.megumin.note
 
 import cn.sabercon.common.data.CTIME
 import cn.sabercon.common.data.desc
-import cn.sabercon.common.throwClientError
 import kotlinx.coroutines.flow.Flow
 import org.springframework.stereotype.Service
 
 @Service
 class NoteHandler(private val repo: NoteRepo) {
 
-    suspend fun get(userId: Long, id: String): Note {
-        return repo.findByUserIdAndId(userId, id) ?: throwClientError("Note does not exist")
+    suspend fun get(userId: Long, id: String): Note? {
+        return repo.findByUserIdAndId(userId, id)
     }
 
     fun list(userId: Long): Flow<Note> {

@@ -1,5 +1,6 @@
-package cn.sabercon.common
+package cn.sabercon.common.web.config
 
+import cn.sabercon.common.web.HttpException
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.boot.autoconfigure.web.WebProperties
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler
@@ -39,35 +40,9 @@ class GlobalExceptionHandler(
 
     override fun getRoutingFunction(errorAttributes: ErrorAttributes) = RouterFunctions.route(RequestPredicates.all()) {
         when (val error = errorAttributes.getError(it)) {
-            is ServiceException -> status(error.status).bodyValue(ErrorResponse(error.code, error.message!!))
+            is HttpException -> status(error.status).bodyValue(mapOf("code" to error.code, "message" to error.message))
             is ResponseStatusException -> status(error.status).build()
             else -> status(HttpStatus.INTERNAL_SERVER_ERROR).build()
         }
     }
 }
-
-data class ErrorResponse(val code: Int, val message: String)
-
-class ServiceException(val code: Int, val status: HttpStatus, message: String) : RuntimeException(message)
-
-interface ErrorCode {
-    val code: Int
-    val status: HttpStatus
-    val message: String
-    fun error(msg: String = this.message) = ServiceException(code, status, msg)
-    fun throws(msg: String = this.message): Nothing = throw error(msg)
-}
-
-enum class BaseCode(override val code: Int, override val message: String, override val status: HttpStatus) : ErrorCode {
-    BAD_REQUEST(400, "Bad Request", HttpStatus.BAD_REQUEST),
-    UNAUTHORIZED(401, "Unauthorized", HttpStatus.UNAUTHORIZED),
-    INTERNAL_SERVER_ERROR(500, "Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR),
-}
-
-fun clientError(msg: String) = BaseCode.BAD_REQUEST.error(msg)
-
-fun serverError(msg: String) = BaseCode.INTERNAL_SERVER_ERROR.error(msg)
-
-fun throwClientError(msg: String): Nothing = BaseCode.BAD_REQUEST.throws(msg)
-
-fun throwServerError(msg: String): Nothing = BaseCode.INTERNAL_SERVER_ERROR.throws(msg)

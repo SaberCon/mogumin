@@ -1,27 +1,17 @@
 package cn.sabercon.common.util
 
-import java.time.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-val DATETIME_FMT = DateTimeFormatter.ISO_DATE_TIME!!
-val DATE_FMT = DateTimeFormatter.ISO_DATE!!
-val TIME_FMT = DateTimeFormatter.ISO_TIME!!
+fun String.toDatetime() = DateTimeFormatter.ISO_DATE_TIME.parse(this, LocalDateTime::from)!!
+
+fun String.toDate() = DateTimeFormatter.ISO_DATE.parse(this, LocalDate::from)!!
+
+fun String.toTime() = DateTimeFormatter.ISO_TIME.parse(this, LocalTime::from)!!
+
 val EPOCH = LocalDateTime.of(1970, 1, 1, 0, 0, 0)!!
-
-fun String.toDatetime() = DATETIME_FMT.parse(this, LocalDateTime::from)!!
-fun String.toDate() = DATE_FMT.parse(this, LocalDate::from)!!
-fun String.toTime() = TIME_FMT.parse(this, LocalTime::from)!!
-fun String.toDatetimeOrNull() = runCatching { toDatetime() }.getOrNull()
-fun String.toDateOrNull() = runCatching { toDate() }.getOrNull()
-fun String.toTimeOrNull() = runCatching { toTime() }.getOrNull()
-
-val LocalDateTime.epochSeconds get() = toEpochSecond(ZoneOffset.UTC)
-
-val Int.milliseconds get() = Duration.ofMillis(toLong())!!
-val Int.seconds get() = Duration.ofSeconds(toLong())!!
-val Int.minutes get() = Duration.ofMinutes(toLong())!!
-val Int.hours get() = Duration.ofHours(toLong())!!
-val Int.days get() = Duration.ofDays(toLong())!!
 
 fun now() = LocalDateTime.now()!!
 

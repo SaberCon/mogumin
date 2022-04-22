@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.event.ReactiveBeforeConvert
 import reactor.kotlin.core.publisher.toMono
 
 @Configuration
-class MongoConfig {
+class MongoConfiguration {
 
     @Bean
     fun mongoBeforeConvertCallback() = ReactiveBeforeConvertCallback<Any> { entity, _ ->

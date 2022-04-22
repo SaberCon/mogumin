@@ -28,11 +28,5 @@ class ContextHolder : ApplicationContextAware {
         fun getProperty(key: String, defaultValue: String = ""): String = getEnv().getProperty(key) ?: defaultValue
 
         fun getProfiles(): Array<String> = getEnv().activeProfiles
-
-        fun isLocal() = getProfiles().contains("local")
-
-        fun isTest() = getProfiles().contains("test")
-
-        fun isProd() = getProfiles().contains("prod")
     }
 }
