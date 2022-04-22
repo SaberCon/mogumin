@@ -1,11 +1,11 @@
-//package cn.sabercon.megumin.note
+// package cn.sabercon.megumin.note
 //
-//import cn.sabercon.common.ext.*
-//import org.springframework.context.annotation.Bean
-//import org.springframework.context.annotation.Configuration
+// import cn.sabercon.common.ext.*
+// import org.springframework.context.annotation.Bean
+// import org.springframework.context.annotation.Configuration
 //
-//@Configuration
-//class NoteRouterConfig {
+// @Configuration
+// class NoteRouterConfig {
 //
 //    @Bean
 //    fun noteRouter(handler: NoteHandler) = coRouter("/note") {
@@ -28,9 +28,9 @@
 //            success()
 //        }
 //    }
-//}
+// }
 //
-//data class NoteParam(
+// data class NoteParam(
 //    val title: String,
 //    val content: String,
-//)
+// )

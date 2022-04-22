@@ -36,4 +36,3 @@ object UnsafeReflection {
         return kClass.memberFunctions.first { it.name == name } as KFunction<R>
     }
 }
-

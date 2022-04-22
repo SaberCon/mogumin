@@ -1,3 +1,5 @@
+import io.gitlab.arturbosch.detekt.Detekt
+import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 
@@ -6,12 +8,13 @@ plugins {
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.6.10"
     kotlin("plugin.spring") version "1.6.10"
-    id("io.gitlab.arturbosch.detekt") version "1.20.0"
+    id("io.gitlab.arturbosch.detekt") version "1.19.0"
 }
 
 group = "cn.sabercon"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
+java.targetCompatibility = JavaVersion.VERSION_11
 
 configurations {
     compileOnly {
@@ -52,7 +55,7 @@ dependencies {
     testImplementation("org.springframework.graphql:spring-graphql-test")
     testImplementation("io.projectreactor:reactor-test")
 
-    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.20.0")
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.19.0")
 }
 
 tasks.withType<KotlinCompile> {
@@ -66,11 +69,18 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
-    this.jvmTarget = "11"
+detekt {
+    autoCorrect = true
+    buildUponDefaultConfig = true
+    config = files("$projectDir/config/detekt/config.yml")
+    baseline = file("$projectDir/config/detekt/baseline.xml")
 }
-tasks.withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask>().configureEach {
-    this.jvmTarget = "11"
+
+tasks.withType<Detekt>().configureEach {
+    jvmTarget = "11"
+}
+tasks.withType<DetektCreateBaselineTask>().configureEach {
+    jvmTarget = "11"
 }
 
 tasks.getByName<BootBuildImage>("bootBuildImage") {

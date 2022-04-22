@@ -7,5 +7,4 @@ class MeguminApplicationTest {
     @Test
     fun `a test`() {
     }
-
 }
