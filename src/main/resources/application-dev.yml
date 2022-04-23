@@ -18,7 +18,9 @@ management:
 logging:
   level:
     web: debug
+    org.springframework.graphql: debug
     org.springframework.r2dbc: debug
     org.springframework.data.mongodb: debug
+    org.springframework.data.redis: debug
     cn.sabercon: debug
 debug: true
