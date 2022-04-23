@@ -16,8 +16,6 @@ class MeguminApplication {
     }
 }
 
-fun main(args: Array<String>) {
-
-    @Suppress("SpreadOperator")
+fun main(vararg args: String) {
     runApplication<MeguminApplication>(*args)
 }

@@ -1,12 +1,10 @@
-// package cn.sabercon.megumin.user
-//
-// import cn.sabercon.common.ext.*
-// import org.springframework.context.annotation.Bean
-// import org.springframework.context.annotation.Configuration
-//
-// @Configuration
-// class UserRouterConfig {
-//
+package cn.sabercon.megumin.user
+
+import org.springframework.context.annotation.Configuration
+
+@Configuration
+class UserRouterConfig {
+
 //    @Bean
 //    fun userRouter(handler: UserHandler) = coRouter("/user") {
 //        post("/login") {
@@ -42,20 +40,20 @@
 //            success()
 //        }
 //    }
-// }
-//
-// private fun maskPhoneNumber(phone: String) = phone.replaceRange(3..6, "****")
-//
-// enum class LoginType { PWD, SMS }
-//
-// data class UserParam(
-//    val username: String,
-//    val avatar: String,
-// )
-//
-// data class CurrentUser(
-//    val id: Long,
-//    val username: String,
-//    val phone: String,
-//    val avatar: String,
-// )
+}
+
+private fun maskPhoneNumber(phone: String) = phone.replaceRange(3..6, "****")
+
+enum class LoginType { PWD, SMS }
+
+data class UserParam(
+    val username: String,
+    val avatar: String,
+)
+
+data class CurrentUser(
+    val id: Long,
+    val username: String,
+    val phone: String,
+    val avatar: String,
+)

@@ -47,7 +47,8 @@ dependencies {
     implementation("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4")
     implementation("com.auth0:java-jwt:3.19.1")
 
-    runtimeOnly("io.r2dbc:r2dbc-postgresql")
+    // fixme
+    runtimeOnly("io.r2dbc:r2dbc-postgresql:0.8.12.RELEASE")
     runtimeOnly("org.postgresql:postgresql")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 

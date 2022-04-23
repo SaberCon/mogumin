@@ -38,6 +38,7 @@ class FilterConfiguration {
             ?.takeIf { it.startsWith("Bearer ", true) }
             ?.substring("Bearer ".length)
             ?.let { jwt.decodeToken(it) }
+            ?: 0
 
         chain.filter(exchange)
     }
