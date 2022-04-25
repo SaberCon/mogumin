@@ -12,7 +12,7 @@ class MeguminApplication {
 
     @Bean
     fun jobRunner() = ApplicationRunner {
-        // to run some ad-hoc tasks
+        // To run some ad-hoc tasks
     }
 }
 

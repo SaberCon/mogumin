@@ -74,8 +74,8 @@ tasks.withType<Test> {
 detekt {
     autoCorrect = true
     buildUponDefaultConfig = true
-    config = files("$projectDir/config/detekt/config.yml")
-    baseline = file("$projectDir/config/detekt/baseline.xml")
+    config = files("$rootDir/config/detekt/config.yml")
+    baseline = file("$rootDir/config/detekt/baseline.xml")
 }
 
 tasks.withType<Detekt>().configureEach {
