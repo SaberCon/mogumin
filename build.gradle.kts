@@ -1,3 +1,4 @@
+import com.netflix.graphql.dgs.codegen.gradle.GenerateJavaTask
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -10,6 +11,7 @@ plugins {
     kotlin("plugin.spring") version "1.6.10"
     // There are some bugs with the latest version 1.20.0
     id("io.gitlab.arturbosch.detekt") version "1.19.0"
+    id("com.netflix.dgs.codegen") version "5.1.17"
 }
 
 group = "cn.sabercon"
@@ -31,7 +33,6 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
-    implementation("org.springframework.boot:spring-boot-starter-graphql")
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
@@ -42,6 +43,10 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+
+    implementation(platform("com.netflix.graphql.dgs:graphql-dgs-platform-dependencies:4.9.25"))
+    implementation("com.netflix.graphql.dgs:graphql-dgs-webflux-starter")
+    implementation("com.netflix.graphql.dgs:graphql-dgs-extended-scalars")
 
     implementation("org.flywaydb:flyway-core")
     implementation("com.google.guava:guava:31.1-jre")
@@ -83,6 +88,12 @@ tasks.withType<Detekt>().configureEach {
 }
 tasks.withType<DetektCreateBaselineTask>().configureEach {
     jvmTarget = "11"
+}
+
+tasks.withType<GenerateJavaTask> {
+    schemaPaths = mutableListOf("$projectDir/src/main/resources/schema")
+    packageName = "cn.sabercon.megumin.graphql.generated"
+    generateClient = true
 }
 
 tasks.getByName<BootBuildImage>("bootBuildImage") {
