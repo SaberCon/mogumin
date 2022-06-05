@@ -1,6 +1,6 @@
 package cn.sabercon.common.data
 
-import cn.sabercon.common.web.Page
+import cn.sabercon.common.model.Page
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.toList
 import org.springframework.data.domain.Pageable

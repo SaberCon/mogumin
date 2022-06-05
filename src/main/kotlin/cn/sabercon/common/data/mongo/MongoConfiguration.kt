@@ -1,9 +1,10 @@
 package cn.sabercon.common.data.mongo
 
-import cn.sabercon.common.data.CTIME
+import cn.sabercon.common.data.CREATED_AT
 import cn.sabercon.common.data.ID
-import cn.sabercon.common.data.MTIME
+import cn.sabercon.common.data.UPDATED_AT
 import cn.sabercon.common.util.UnsafeReflection
+import cn.sabercon.common.util.UnsafeReflection.modifyData
 import cn.sabercon.common.util.now
 import org.bson.types.ObjectId
 import org.springframework.context.annotation.Bean
@@ -20,8 +21,8 @@ class MongoConfiguration {
         val now = now()
 
         when (id) {
-            "" -> UnsafeReflection.modifyData(entity, ID to ObjectId().toString(), CTIME to now, MTIME to now).toMono()
-            else -> UnsafeReflection.modifyData(entity, MTIME to now).toMono()
+            "" -> modifyData(entity, ID to ObjectId().toString(), CREATED_AT to now, UPDATED_AT to now).toMono()
+            else -> modifyData(entity, UPDATED_AT to now).toMono()
         }
     }
 }

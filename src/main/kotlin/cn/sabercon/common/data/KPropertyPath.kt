@@ -3,7 +3,9 @@ package cn.sabercon.common.data
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty1
 
-/** copied from [org.springframework.data.mapping] */
+/**
+ * Copied from [org.springframework.data.mapping]
+ */
 class KPropertyPath<T, U>(val parent: KProperty<U?>, val child: KProperty1<U, T>) : KProperty<T> by child
 
 fun asString(property: KProperty<*>): String {

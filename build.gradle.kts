@@ -1,17 +1,14 @@
-import com.netflix.graphql.dgs.codegen.gradle.GenerateJavaTask
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 
 plugins {
-    id("org.springframework.boot") version "2.7.0-RC1"
+    id("org.springframework.boot") version "2.7.0"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    kotlin("jvm") version "1.6.10"
-    kotlin("plugin.spring") version "1.6.10"
-    // There are some bugs with the latest version 1.20.0
+    kotlin("jvm") version "1.6.21"
+    kotlin("plugin.spring") version "1.6.21"
     id("io.gitlab.arturbosch.detekt") version "1.19.0"
-    id("com.netflix.dgs.codegen") version "5.1.17"
 }
 
 group = "cn.sabercon"
@@ -27,12 +24,11 @@ configurations {
 
 repositories {
     mavenCentral()
-    maven { url = uri("https://repo.spring.io/milestone") }
-    maven { url = uri("https://repo.spring.io/snapshot") }
 }
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-graphql")
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
@@ -40,22 +36,16 @@ dependencies {
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
+    implementation("io.projectreactor.addons:reactor-extra")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
-    implementation(platform("com.netflix.graphql.dgs:graphql-dgs-platform-dependencies:4.9.25"))
-    implementation("com.netflix.graphql.dgs:graphql-dgs-webflux-starter")
-    implementation("com.netflix.graphql.dgs:graphql-dgs-extended-scalars")
-
-    implementation("org.flywaydb:flyway-core")
     implementation("com.google.guava:guava:31.1-jre")
     implementation("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4")
     implementation("com.auth0:java-jwt:3.19.1")
 
-    // fixme
-    runtimeOnly("io.r2dbc:r2dbc-postgresql:0.8.12.RELEASE")
-    runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("org.postgresql:r2dbc-postgresql")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -88,12 +78,6 @@ tasks.withType<Detekt>().configureEach {
 }
 tasks.withType<DetektCreateBaselineTask>().configureEach {
     jvmTarget = "11"
-}
-
-tasks.withType<GenerateJavaTask> {
-    schemaPaths = mutableListOf("$projectDir/src/main/resources/schema")
-    packageName = "cn.sabercon.megumin.graphql.generated"
-    generateClient = true
 }
 
 tasks.getByName<BootBuildImage>("bootBuildImage") {

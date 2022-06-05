@@ -23,9 +23,12 @@ class Jwt(@Value("\${sabercon.secret}") key: String) {
         return JWT.create()
             .withSubject(userId.toString())
             .withExpiresAt(Date.from((now() + expiration).toInstant(ZoneOffset.UTC)))
-            .sign(algorithm)!!
+            .sign(algorithm)
     }
 
+    /**
+     * @return `null` if [token] is invalid
+     */
     fun decodeToken(token: String): Long? {
         return runCatching { verifier.verify(token) }
             .map { it.subject.toLong() }

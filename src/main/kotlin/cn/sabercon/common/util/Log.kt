@@ -8,4 +8,4 @@ inline val <reified T : Any> T.log get(): Logger = logger<T>()
 
 inline fun <reified T : Any> logger(): Logger = LoggerFactory.getLogger(actualJavaClass(T::class))
 
-fun actualJavaClass(clazz: KClass<*>) = if (clazz.isCompanion) clazz.java.enclosingClass!! else clazz.java
+fun actualJavaClass(clazz: KClass<*>): Class<*> = if (clazz.isCompanion) clazz.java.enclosingClass else clazz.java

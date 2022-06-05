@@ -1,6 +1,6 @@
 package cn.sabercon.megumin.note
 
-import cn.sabercon.common.data.CTIME
+import cn.sabercon.common.data.CREATED_AT
 import cn.sabercon.common.data.desc
 import kotlinx.coroutines.flow.Flow
 import org.springframework.stereotype.Service
@@ -13,7 +13,7 @@ class NoteHandler(private val repo: NoteRepo) {
     }
 
     fun list(userId: Long): Flow<Note> {
-        return repo.findByUserId(userId, desc(CTIME))
+        return repo.findByUserId(userId, desc(CREATED_AT))
     }
 
     suspend fun insert(userId: Long, param: NoteParam) {
