@@ -1,6 +1,5 @@
 package cn.sabercon.common.util
 
-import com.fasterxml.jackson.core.json.JsonReadFeature
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.MapperFeature
@@ -14,7 +13,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 val JSON: JsonMapper = jacksonMapperBuilder()
     .configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false)
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    .configure(JsonReadFeature.ALLOW_TRAILING_COMMA, true)
     .addModules(JavaTimeModule())
     .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
     .build()

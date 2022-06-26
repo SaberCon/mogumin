@@ -1,6 +1,7 @@
 package cn.sabercon.common.web.config
 
 import cn.sabercon.common.Jwt
+import cn.sabercon.common.data.USER_ID
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
@@ -33,7 +34,7 @@ class FilterConfiguration {
     @Bean
     @Order(2)
     fun loginFilter(jwt: Jwt) = WebFilter { exchange, chain ->
-        exchange.attributes["userId"] = exchange.request.headers[HttpHeaders.AUTHORIZATION]
+        exchange.attributes[USER_ID] = exchange.request.headers[HttpHeaders.AUTHORIZATION]
             ?.getOrNull(0)
             ?.takeIf { it.startsWith("Bearer ", true) }
             ?.substring("Bearer ".length)

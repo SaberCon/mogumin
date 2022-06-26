@@ -29,6 +29,7 @@ class AliyunClient(private val properties: AliyunProps) {
         .build()
 
     private val formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+
     private val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
     fun buildOssData(): OssData {
@@ -39,7 +40,7 @@ class AliyunClient(private val properties: AliyunProps) {
             "expiration" to expiration.format(formatter1),
             "conditions" to listOf(
                 listOf("content-length-range", 0, 536870912),
-                listOf("starts-with", '$' + "key", dir),
+                listOf("starts-with", "\$key", dir),
             )
         ).let { base64(it.toJson()) }
 
@@ -77,10 +78,10 @@ class AliyunClient(private val properties: AliyunProps) {
         val url = "https://dysmsapi.aliyuncs.com?Signature=$signature&$query"
 
         val response: String = client.get().uri(url).retrieve().awaitBody()
-        if (!response.contains(""""Code":"OK"""")) {
-            log.warn("Error when sending sms code: {}", response)
-        } else {
+        if (""""Code":"OK"""" in response) {
             log.info("Sms code sending succeeded. Code: {}", code)
+        } else {
+            log.warn("Sms code sending failed. Code: {}", response)
         }
 
         return code

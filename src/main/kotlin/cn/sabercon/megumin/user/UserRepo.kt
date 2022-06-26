@@ -20,6 +20,6 @@ data class User(
     val password: String,
     val phone: String,
     val avatar: String,
-    val ctime: LocalDateTime = EPOCH,
-    val mtime: LocalDateTime = EPOCH,
+    val createdAt: LocalDateTime = EPOCH,
+    val updatedAt: LocalDateTime = EPOCH,
 )

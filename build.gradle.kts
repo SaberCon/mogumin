@@ -36,7 +36,6 @@ dependencies {
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
-    implementation("io.projectreactor.addons:reactor-extra")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
@@ -72,7 +71,6 @@ detekt {
     config = files("$rootDir/config/detekt/config.yml")
     baseline = file("$rootDir/config/detekt/baseline.xml")
 }
-
 tasks.withType<Detekt>().configureEach {
     jvmTarget = "11"
 }

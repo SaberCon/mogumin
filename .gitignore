@@ -38,3 +38,4 @@ out/
 ### Personal Files ###
 .DS_Store
 application-local.yml
+application-local.yaml

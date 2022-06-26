@@ -18,9 +18,9 @@ import org.springframework.web.server.ResponseStatusException
 import java.util.stream.*
 
 /**
- * Order(-2) is to give it a higher priority than the
+ * `@Order(-2)` is to give it a higher priority than the
  * [org.springframework.boot.autoconfigure.web.reactive.error.DefaultErrorWebExceptionHandler]
- * which is registered at Order(-1).
+ * which is registered at `@Order(-1)`.
  */
 @Order(-2)
 @Component

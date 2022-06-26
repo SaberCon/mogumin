@@ -1,5 +1,6 @@
 package cn.sabercon.common.web
 
+import cn.sabercon.common.data.USER_ID
 import cn.sabercon.common.util.parse
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.UNAUTHORIZED
@@ -33,6 +34,6 @@ inline fun <reified T : Any> ServerRequest.pathParam(name: String): T {
     return pathVariable(name).parse()
 }
 
-fun ServerRequest.userIdOrZero() = (attributeOrNull("userId") as Long?) ?: 0
+fun ServerRequest.userIdOrZero() = (attributeOrNull(USER_ID) as Long?) ?: 0
 
 fun ServerRequest.userId() = userIdOrZero().also { if (it <= 0) UNAUTHORIZED.throws() }

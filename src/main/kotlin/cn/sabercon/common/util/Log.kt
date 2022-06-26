@@ -4,8 +4,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlin.reflect.KClass
 
-inline val <reified T : Any> T.log get(): Logger = logger<T>()
+val Any.log get(): Logger = LoggerFactory.getLogger(actualJavaClass(this::class))
 
-inline fun <reified T : Any> logger(): Logger = LoggerFactory.getLogger(actualJavaClass(T::class))
-
-fun actualJavaClass(clazz: KClass<*>): Class<*> = if (clazz.isCompanion) clazz.java.enclosingClass else clazz.java
+fun actualJavaClass(clazz: KClass<*>): Class<*> {
+    return if (clazz.isCompanion) clazz.java.enclosingClass else clazz.java
+}

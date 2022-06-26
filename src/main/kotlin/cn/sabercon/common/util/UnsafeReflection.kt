@@ -8,8 +8,10 @@ import kotlin.reflect.full.instanceParameter
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.memberProperties
 
-/** CAUTION: Reflection is error-prone and ill-performance, so DO NOT use these functions unless you have to */
-
+/**
+ * ### CAUTION:
+ * Reflection is error-prone and ill-performance, so **DON'T** use these functions unless you have to
+ */
 object UnsafeReflection {
     fun <T : Any?> get(target: Any, propertyName: String): T {
         val property: KProperty1<*, T> = getProperty(target::class, propertyName)
@@ -17,7 +19,7 @@ object UnsafeReflection {
     }
 
     fun <T : Any> modifyData(data: T, vararg properties: Pair<String, Any?>): T {
-        assert(data::class.isData) { "Only an instance of data class can be modified" }
+        require(data::class.isData) { "Only an instance of data class can be modified" }
         val copyMethod: KFunction<T> = getFunction(data::class, "copy")
 
         return properties.toMap()

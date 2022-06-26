@@ -10,6 +10,7 @@ import org.springframework.web.reactive.config.WebFluxConfigurer
 class WebFluxConfiguration : WebFluxConfigurer {
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
-        registry.addResourceHandler("/**").addResourceLocations("classpath:/static/")
+        registry.addResourceHandler("/**")
+            .addResourceLocations("classpath:/static/")
     }
 }
