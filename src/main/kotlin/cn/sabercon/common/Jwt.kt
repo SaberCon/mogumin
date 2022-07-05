@@ -4,6 +4,7 @@ import cn.sabercon.common.util.now
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import java.time.ZoneOffset
 import java.util.*
@@ -33,5 +34,17 @@ class Jwt(@Value("\${sabercon.secret}") key: String) {
         return runCatching { verifier.verify(token) }
             .map { it.subject.toLong() }
             .getOrNull()
+    }
+
+    /**
+     * @return `0` if `Authorization` header is absent or invalid
+     */
+    fun decodeAuthorizationHeader(headers: HttpHeaders): Long {
+        return headers[HttpHeaders.AUTHORIZATION]
+            ?.getOrNull(0)
+            ?.takeIf { it.startsWith("Bearer ", true) }
+            ?.substring("Bearer ".length)
+            ?.let { decodeToken(it) }
+            ?: 0
     }
 }

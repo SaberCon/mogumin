@@ -4,7 +4,6 @@ import cn.sabercon.common.Jwt
 import cn.sabercon.common.data.USER_ID
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpHeaders
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.reactive.config.CorsRegistry
 import org.springframework.web.reactive.config.EnableWebFlux
@@ -30,14 +29,8 @@ class WebFluxConfiguration : WebFluxConfigurer {
     }
 
     @Bean
-    fun loginFilter(jwt: Jwt) = WebFilter { exchange, chain ->
-        exchange.attributes[USER_ID] = exchange.request.headers[HttpHeaders.AUTHORIZATION]
-            ?.getOrNull(0)
-            ?.takeIf { it.startsWith("Bearer ", true) }
-            ?.substring("Bearer ".length)
-            ?.let { jwt.decodeToken(it) }
-            ?: 0
-
+    fun loginWebFilter(jwt: Jwt) = WebFilter { exchange, chain ->
+        exchange.attributes[USER_ID] = jwt.decodeAuthorizationHeader(exchange.request.headers)
         chain.filter(exchange)
     }
 }
