@@ -1,3 +1,4 @@
+import com.netflix.graphql.dgs.codegen.gradle.GenerateJavaTask
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -9,6 +10,7 @@ plugins {
     kotlin("jvm") version "1.6.21"
     kotlin("plugin.spring") version "1.6.21"
     id("io.gitlab.arturbosch.detekt") version "1.19.0"
+    id("com.netflix.dgs.codegen") version "5.1.17"
 }
 
 group = "cn.sabercon"
@@ -86,4 +88,15 @@ tasks.getByName<BootBuildImage>("bootBuildImage") {
             url = System.getenv("DOCKER_REGISTRY")
         }
     }
+}
+
+tasks.withType<GenerateJavaTask> {
+    schemaPaths = mutableListOf("$projectDir/src/main/resources/graphql")
+    packageName = "cn.sabercon.dgs.codegen.generated"
+    typeMapping = mutableMapOf(
+        "URI" to "String",
+        "DateTime" to "java.time.LocalDateTime",
+        "Date" to "java.time.LocalDate",
+        "Time" to "java.time.LocalTime",
+    )
 }

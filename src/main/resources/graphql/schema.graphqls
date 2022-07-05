@@ -62,7 +62,7 @@ input UpdatePasswordInput {
 input UpdateUserInput {
     clientMutationId: String
     username: String
-    avatar: String
+    avatar: URI
 }
 
 input CreateNoteInput {
@@ -105,12 +105,12 @@ type SmsCodeValidation {
 }
 
 type OssData {
-    accessId: String
-    host: String
-    dir: String
-    policy: String
-    signature: String
-    expire: Long
+    accessId: String!
+    host: String!
+    dir: String!
+    policy: String!
+    signature: String!
+    expire: Long!
 }
 
 type User implements Node & Auditable {
@@ -119,7 +119,7 @@ type User implements Node & Auditable {
     updatedAt: DateTime!
     username: String!
     phone: String!
-    avatar: String!
+    avatar: URI!
     notes(
         """Returns the elements in the list that come after the specified cursor."""
         after: String
@@ -131,7 +131,7 @@ type User implements Node & Auditable {
         last: Int
         """Ordering of the returned elements."""
         orderBy: AuditableOrder = {field: CREATED_AT, direction: DESC}
-    ): NoteConnection!
+    ): NoteConnection! @skipcodegen
 }
 
 """The connection type for Note."""
@@ -164,7 +164,7 @@ type Note implements Node & Auditable {
     updatedAt: DateTime!
     title: String!
     content: String!
-    creator: User!
+    creator: User! @skipcodegen
 }
 
 """Ordering options for Auditable connections"""
@@ -199,17 +199,17 @@ type BasePayload {
 
 """Information about pagination in a connection."""
 type PageInfo {
+    """When paginating backwards, the cursor to continue."""
+    startCursor: String
+
     """When paginating forwards, the cursor to continue."""
     endCursor: String
-
-    """When paginating forwards, are there more items?"""
-    hasNextPage: Boolean!
 
     """When paginating backwards, are there more items?"""
     hasPreviousPage: Boolean!
 
-    """When paginating backwards, the cursor to continue."""
-    startCursor: String
+    """When paginating forwards, are there more items?"""
+    hasNextPage: Boolean!
 }
 
 """An object with an ID."""
@@ -239,3 +239,5 @@ scalar Time
 scalar URI
 
 scalar Long
+
+directive @skipcodegen on FIELD_DEFINITION
