@@ -1,6 +1,5 @@
-package cn.sabercon.common.web.config
+package cn.sabercon.common.web
 
-import cn.sabercon.common.web.HttpException
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.boot.autoconfigure.web.WebProperties
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler
@@ -24,7 +23,7 @@ import java.util.stream.*
  */
 @Order(-2)
 @Component
-class GlobalExceptionHandler(
+class GlobalWebExceptionHandler(
     errorAttributes: ErrorAttributes,
     webProperties: WebProperties,
     applicationContext: ApplicationContext,
