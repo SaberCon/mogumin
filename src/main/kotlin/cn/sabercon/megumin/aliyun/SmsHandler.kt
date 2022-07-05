@@ -20,7 +20,7 @@ class SmsHandler(private val aliyunClient: AliyunClient, private val redis: Reac
 
 enum class SmsType(val code: Int, val authRequired: Boolean) {
     LOGIN(1, false),
-    UPDATE_PWD(2, true),
+    UPDATE_PASSWORD(2, true),
     BIND_PHONE(3, false),
     UNBIND_PHONE(4, true),
 }

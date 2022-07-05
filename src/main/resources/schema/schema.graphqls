@@ -1,23 +1,200 @@
 """The query root of GraphQL interface."""
 type Query {
     """Fetches an object given its ID."""
-    node(
-        """ID of the object."""
-        id: ID!
-    ): Node
+    node(id: ID!): Node
 
     """Lookup nodes by a list of IDs."""
-    nodes(
-        """The list of node IDs."""
-        ids: [ID!]!
-    ): [Node]!
+    nodes(ids: [ID!]!): [Node]!
 
     """The currently authenticated user."""
     viewer: User!
+
+    ossData: OssData!
+
+    smsCodeValidation(type: SmsType!, phone: String, code: String!): SmsCodeValidation!
 }
 
 type Mutation {
-    test: String
+    sendSmsCode(input: SendSmsCodeInput!): BasePayload!
+
+    login(input: LoginInput!): LoginPayload!
+    updatePhone(input: UpdatePhoneInput!): BasePayload!
+    updatePassword(input: UpdatePasswordInput!): BasePayload!
+    updateUser(input: UpdateUserInput!): BasePayload!
+
+    createNote(input: CreateNoteInput!): NotePayload!
+    updateNote(input: UpdateNoteInput!): NotePayload!
+    deleteNote(input: DeleteNoteInput!): NotePayload!
+}
+
+input SendSmsCodeInput {
+    clientMutationId: String
+    type: SmsType!
+    phone: String
+    code: String!
+}
+
+input LoginInput {
+    clientMutationId: String
+    type: LoginType!
+    phone: String!
+    code: String!
+}
+
+type LoginPayload {
+    clientMutationId: String
+    token: String!
+}
+
+input UpdatePhoneInput {
+    clientMutationId: String
+    phone: String!
+    bindCode: String!
+    unbindCode: String!
+}
+
+input UpdatePasswordInput {
+    clientMutationId: String
+    password: String!
+    code: String!
+}
+
+input UpdateUserInput {
+    clientMutationId: String
+    username: String
+    avatar: String
+}
+
+input CreateNoteInput {
+    clientMutationId: String
+    title: String!
+    content: String!
+}
+
+input UpdateNoteInput {
+    clientMutationId: String
+    id: ID!
+    title: String!
+    content: String!
+}
+
+input DeleteNoteInput {
+    clientMutationId: String
+    id: ID!
+}
+
+type NotePayload {
+    clientMutationId: String
+    note: Note!
+}
+
+enum SmsType {
+    LOGIN
+    UPDATE_PASSWORD
+    BIND_PHONE
+    UNBIND_PHONE
+}
+
+enum LoginType {
+    SMS
+    PWD
+}
+
+type SmsCodeValidation {
+    matched: Boolean
+}
+
+type OssData {
+    accessId: String
+    host: String
+    dir: String
+    policy: String
+    signature: String
+    expire: Long
+}
+
+type User implements Node & Auditable {
+    id: ID!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    username: String!
+    phone: String!
+    avatar: String!
+    notes(
+        """Returns the elements in the list that come after the specified cursor."""
+        after: String
+        """Returns the elements in the list that come before the specified cursor."""
+        before: String
+        """Returns the first _n_ elements from the list."""
+        first: Int
+        """Returns the last _n_ elements from the list."""
+        last: Int
+        """Ordering of the returned elements."""
+        orderBy: AuditableOrder = {field: CREATED_AT, direction: DESC}
+    ): NoteConnection!
+}
+
+"""The connection type for Note."""
+type NoteConnection {
+    """A list of edges."""
+    edges: [NoteEdge!]!
+
+    """A list of nodes."""
+    nodes: [Note!]!
+
+    """Information to aid in pagination."""
+    pageInfo: PageInfo!
+
+    """Identifies the total count of items in the connection."""
+    totalCount: Int!
+}
+
+"""An edge in a connection."""
+type NoteEdge {
+    """A cursor for use in pagination."""
+    cursor: String!
+
+    """The item at the end of the edge."""
+    node: Note
+}
+
+type Note implements Node & Auditable {
+    id: ID!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    title: String!
+    content: String!
+    creator: User!
+}
+
+"""Ordering options for Auditable connections"""
+input AuditableOrder {
+    """The ordering direction."""
+    direction: OrderDirection!
+
+    """The field to order by."""
+    field: AuditableOrderField!
+}
+
+"""Properties by which Auditable connections can be ordered."""
+enum AuditableOrderField {
+    CREATED_BY
+    UPDATED_BY
+}
+
+"""Possible directions in which to order a list of items when provided an `orderBy` argument."""
+enum OrderDirection {
+    """Specifies an ascending order for a given `orderBy` argument."""
+    ASC
+
+    """Specifies a descending order for a given `orderBy` argument."""
+    DESC
+}
+
+
+type BasePayload {
+    """A unique identifier for the client performing the mutation."""
+    clientMutationId: String
 }
 
 """Information about pagination in a connection."""
@@ -41,7 +218,7 @@ interface Node {
     id: ID!
 }
 
-interface Datetimexxxxxx {
+interface Auditable {
     """Identifies the date and time when the object was created."""
     createdAt: DateTime!
 
@@ -60,3 +237,5 @@ scalar Time
 
 """An RFC 3986, RFC 3987, and RFC 6570 (level 4) compliant URI string."""
 scalar URI
+
+scalar Long

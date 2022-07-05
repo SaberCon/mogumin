@@ -46,7 +46,7 @@ class UserHandler(private val smsHandler: SmsHandler, private val repo: UserRepo
 
     suspend fun updatePwd(userId: Long, password: String, code: String) {
         val user = get(userId)
-        smsHandler.checkCode(SmsType.UPDATE_PWD, user.phone, code)
+        smsHandler.checkCode(SmsType.UPDATE_PASSWORD, user.phone, code)
         repo.save(user.copy(password = sha256(password)))
     }
 
