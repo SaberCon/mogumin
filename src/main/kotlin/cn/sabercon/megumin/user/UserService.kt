@@ -14,8 +14,10 @@ class UserService(private val smsService: SmsService, private val repo: UserRepo
 
     suspend fun login(type: LoginType, phone: String, code: String): String {
         val user = when (type) {
-            LoginType.PWD -> repo.findByPhone(phone)?.takeIf { it.password == sha256(code) }
-                ?: throw IllegalArgumentException("Wrong phone or password")
+            LoginType.PWD -> {
+                repo.findByPhone(phone)?.takeIf { it.password == sha256(code) }
+                    ?: throw IllegalArgumentException("Wrong phone or password")
+            }
             LoginType.SMS -> {
                 require(smsService.checkCode(SmsType.LOGIN, phone, code))
                 repo.findByPhone(phone) ?: register(phone)

@@ -130,7 +130,7 @@ type User implements Node & Auditable {
         """Returns the elements in the list that come after the specified cursor."""
         after: String
         """Ordering of the returned elements."""
-        orderBy: AuditableOrder!
+        orderBy: AuditableOrder = {direction: DESC, field: CREATED_AT}
     ): NoteConnection! @skipcodegen
 }
 

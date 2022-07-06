@@ -27,7 +27,6 @@ class MongoConfiguration {
         val offsetDateTimeReadConverter = @ReadingConverter object : Converter<Date, OffsetDateTime> {
             override fun convert(source: Date) = source.toInstant().atOffset(ZoneOffset.UTC)
         }
-
         val offsetDateTimeWriteConverter = @WritingConverter object : Converter<OffsetDateTime, Date> {
             override fun convert(source: OffsetDateTime) = Date.from(source.toInstant())
         }

@@ -22,7 +22,7 @@ class OffsetPageRequest(private val offset: Long, page: Int, limit: Int, sort: S
 data class ForwardPagination(
     val first: Int,
     val after: String?,
-    val orderBy: RelayOrder,
+    val orderBy: OrderOption,
 ) {
 
     fun toPageRequest(): OffsetPageRequest {
@@ -31,7 +31,7 @@ data class ForwardPagination(
     }
 }
 
-data class RelayOrder(
+data class OrderOption(
     val direction: Sort.Direction,
     val field: String,
 ) {
@@ -67,14 +67,16 @@ data class CountConnection<out T : Any>(
     companion object {
         fun <T : Any> fromForwardPage(page: Page<T>): CountConnection<T> {
             val offset = page.pageable.offset
-            val edges = page.content.mapIndexed { index, node -> Edge(node, (offset + index + 1).toString()) }
+            val totalCount = page.totalElements
+            val nodes = page.content
+            val edges = nodes.mapIndexed { index, node -> Edge(node, (offset + index + 1).toString()) }
             val pageInfo = PageInfo(
                 startCursor = edges.firstOrNull()?.cursor,
                 endCursor = edges.lastOrNull()?.cursor,
                 hasPreviousPage = offset > 0,
-                hasNextPage = offset + edges.size < page.totalElements,
+                hasNextPage = offset + nodes.size < totalCount,
             )
-            return CountConnection(edges, page.content, pageInfo, page.totalElements)
+            return CountConnection(edges, nodes, pageInfo, totalCount)
         }
     }
 }

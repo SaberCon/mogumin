@@ -9,4 +9,4 @@ CREATE TABLE IF NOT EXISTS t_user
     f_updated_at TIMESTAMPTZ NOT NULL
 );
 
-CREATE INDEX IF NOT EXISTS idx_user_phone ON t_user (f_phone);
+CREATE UNIQUE INDEX IF NOT EXISTS uidx_user_phone ON t_user (f_phone);
