@@ -72,19 +72,19 @@ input CreateNoteInput {
 
 type CreateNotePayload {
     clientMutationId: String
-    note: Note!
+    subject: Note!
 }
 
 input UpdateNoteInput {
     clientMutationId: String
     id: ID!
-    title: String!
-    content: String!
+    title: String
+    content: String
 }
 
 type UpdateNotePayload {
     clientMutationId: String
-    note: Note
+    subject: Note
 }
 
 input DeleteNoteInput {

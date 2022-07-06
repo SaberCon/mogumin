@@ -14,6 +14,6 @@ data class Note(
     val userId: Long,
     val title: String,
     val content: String,
-    val ctime: OffsetDateTime = EPOCH,
-    val mtime: OffsetDateTime = EPOCH,
+    val createdAt: OffsetDateTime = EPOCH,
+    val updatedAt: OffsetDateTime = EPOCH,
 )

@@ -1,6 +1,6 @@
 package cn.sabercon.megumin.aliyun
 
-import cn.sabercon.dgs.codegen.generated.types.DefaultPayload
+import cn.sabercon.common.graphql.DefaultPayload
 import cn.sabercon.dgs.codegen.generated.types.SendSmsCodeInput
 import cn.sabercon.dgs.codegen.generated.types.SmsCodeValidation
 import cn.sabercon.dgs.codegen.generated.types.SmsType

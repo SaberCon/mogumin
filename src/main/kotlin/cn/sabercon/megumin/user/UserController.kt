@@ -1,6 +1,6 @@
 package cn.sabercon.megumin.user
 
-import cn.sabercon.dgs.codegen.generated.types.DefaultPayload
+import cn.sabercon.common.graphql.DefaultPayload
 import cn.sabercon.dgs.codegen.generated.types.LoginInput
 import cn.sabercon.dgs.codegen.generated.types.LoginPayload
 import cn.sabercon.dgs.codegen.generated.types.UpdateUserInput
