@@ -26,7 +26,6 @@ object CustomScalars {
                 if (input !is StringValue) throw CoercingParseLiteralException()
                 return input.value
             }
-
         })
         .build()
 }
