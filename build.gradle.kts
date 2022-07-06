@@ -41,6 +41,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+    implementation("com.graphql-java:graphql-java-extended-scalars:18.1")
 
     implementation("com.google.guava:guava:31.1-jre")
     implementation("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4")

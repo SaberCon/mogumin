@@ -4,7 +4,7 @@ import cn.sabercon.common.util.EPOCH
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 interface UserRepo : CoroutineCrudRepository<User, Long> {
 
@@ -20,6 +20,6 @@ data class User(
     val password: String,
     val phone: String,
     val avatar: String,
-    val createdAt: LocalDateTime = EPOCH,
-    val updatedAt: LocalDateTime = EPOCH,
+    val createdAt: OffsetDateTime = EPOCH,
+    val updatedAt: OffsetDateTime = EPOCH,
 )

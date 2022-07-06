@@ -4,7 +4,7 @@ import cn.sabercon.common.data.AssetRepository
 import cn.sabercon.common.util.EPOCH
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 interface NoteRepo : AssetRepository<Note>
 
@@ -14,6 +14,6 @@ data class Note(
     val userId: Long,
     val title: String,
     val content: String,
-    val ctime: LocalDateTime = EPOCH,
-    val mtime: LocalDateTime = EPOCH,
+    val ctime: OffsetDateTime = EPOCH,
+    val mtime: OffsetDateTime = EPOCH,
 )
