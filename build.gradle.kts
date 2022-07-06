@@ -96,8 +96,5 @@ tasks.withType<GenerateJavaTask> {
     packageName = "cn.sabercon.dgs.codegen.generated"
     typeMapping = mutableMapOf(
         "URI" to "String",
-        "DateTime" to "java.time.LocalDateTime",
-        "Date" to "java.time.LocalDate",
-        "Time" to "java.time.LocalTime",
     )
 }

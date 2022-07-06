@@ -11,27 +11,26 @@ type Query {
 
     ossData: OssData!
 
-    smsCodeValidation(type: SmsType!, phone: String, code: String!): SmsCodeValidation!
+    smsCodeValidation(type: SmsType!, phone: String!, code: String!): SmsCodeValidation!
 }
 
 type Mutation {
-    sendSmsCode(input: SendSmsCodeInput!): BasePayload!
+    sendSmsCode(input: SendSmsCodeInput!): DefaultPayload!
 
     login(input: LoginInput!): LoginPayload!
-    updatePhone(input: UpdatePhoneInput!): BasePayload!
-    updatePassword(input: UpdatePasswordInput!): BasePayload!
-    updateUser(input: UpdateUserInput!): BasePayload!
+    updateUserPhone(input: UpdateUserPhoneInput!): DefaultPayload!
+    updateUserPassword(input: UpdateUserPasswordInput!): DefaultPayload!
+    updateUser(input: UpdateUserInput!): DefaultPayload!
 
-    createNote(input: CreateNoteInput!): NotePayload!
-    updateNote(input: UpdateNoteInput!): NotePayload!
-    deleteNote(input: DeleteNoteInput!): NotePayload!
+    createNote(input: CreateNoteInput!): CreateNotePayload!
+    updateNote(input: UpdateNoteInput!): UpdateNotePayload!
+    deleteNote(input: DeleteNoteInput!): DefaultPayload!
 }
 
 input SendSmsCodeInput {
     clientMutationId: String
     type: SmsType!
-    phone: String
-    code: String!
+    phone: String!
 }
 
 input LoginInput {
@@ -46,14 +45,14 @@ type LoginPayload {
     token: String!
 }
 
-input UpdatePhoneInput {
+input UpdateUserPhoneInput {
     clientMutationId: String
     phone: String!
     bindCode: String!
     unbindCode: String!
 }
 
-input UpdatePasswordInput {
+input UpdateUserPasswordInput {
     clientMutationId: String
     password: String!
     code: String!
@@ -71,6 +70,11 @@ input CreateNoteInput {
     content: String!
 }
 
+type CreateNotePayload {
+    clientMutationId: String
+    note: Note!
+}
+
 input UpdateNoteInput {
     clientMutationId: String
     id: ID!
@@ -78,14 +82,14 @@ input UpdateNoteInput {
     content: String!
 }
 
+type UpdateNotePayload {
+    clientMutationId: String
+    note: Note
+}
+
 input DeleteNoteInput {
     clientMutationId: String
     id: ID!
-}
-
-type NotePayload {
-    clientMutationId: String
-    note: Note!
 }
 
 enum SmsType {
@@ -101,7 +105,7 @@ enum LoginType {
 }
 
 type SmsCodeValidation {
-    matched: Boolean
+    matched: Boolean!
 }
 
 type OssData {
@@ -191,8 +195,7 @@ enum OrderDirection {
     DESC
 }
 
-
-type BasePayload {
+type DefaultPayload {
     """A unique identifier for the client performing the mutation."""
     clientMutationId: String
 }
